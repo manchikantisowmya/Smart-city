@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Login from './components/Login'; 
 import Signup from './components/SignUp';
 import Navigation from './components/Navbar'; 
-
+import './css/app.css';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -30,8 +30,11 @@ function App() {
     setUserData(null);
   };
 
+  // Determine the class to apply based on login/signup state
+  const backgroundClass = !isLoggedIn ? 'auth-background' : 'app-background';
+
   return (
-    <div className="App">
+    <div className={`App ${backgroundClass}`}>
       {/* Conditionally render Login or Navigation based on isLoggedIn state */}
       {!isLoggedIn ? (
         isSigningUp ? (

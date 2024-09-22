@@ -1,0 +1,43 @@
+/* Navbar.css */
+
+/* White borders */
+.MuiDrawer-paper {
+  border-right: 2px solid white; /* Right border of side panel */
+  height:100vh;
+  overflow: hidden;
+}
+
+.MuiAppBar-root {
+  border-bottom: 2px solid white; /* Bottom border of header */
+}
+
+.MuiBox-root {
+  border-left: 2px solid white; /* Left border of main content section */
+}
+
+/* Drawer: only show icons when closed */
+.MuiDrawer-paper {
+  overflow-x: hidden;
+}
+
+/* Center icons when the drawer is closed */
+.MuiListItemButton-root {
+  justify-content: center;
+  display: flex;
+  min-width: 40px;
+  align-items: center;
+}
+.MuiDrawer-paperClosed {
+  width: 60px; /* Width when drawer is closed */
+}
+
+/* Make sure icons shrink when drawer is closed */
+.MuiListItemIcon-root {
+  min-width: 40px; /* Reduced width for icons when drawer is closed */
+  display: flex;
+}
+
+/* Make sure icons shrink and text hides when drawer is closed */
+.MuiListItemText-root {
+  display: none; /* Hide text in collapsed state */
+}

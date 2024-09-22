@@ -5,30 +5,25 @@ import Drawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import AppsIcon from '@mui/icons-material/Apps';
-// import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-// import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-// import InboxIcon from '@mui/icons-material/MoveToInbox';
-// import MailIcon from '@mui/icons-material/Mail';
 import ContentSection from './ContentSection';
-import Button from '@mui/material/Button'
-import DroneIcon from '@mui/icons-material/Toys'; // Example icon for Drone Station
-import CameraIcon from '@mui/icons-material/VideoCameraFront'; // Camera Icon for Traffic Camera
-import SatelliteIcon from '@mui/icons-material/SatelliteAlt'; // Satellite Icon for Satellite Data
-import IoTIcon from '@mui/icons-material/Sensors'; // IoT Icon for IoT Station
-import AccountCircle from '@mui/icons-material/AccountCircle';
+import Button from '@mui/material/Button';
+import DroneIcon from '@mui/icons-material/Toys';
+import CameraIcon from '@mui/icons-material/VideoCameraFront';
+import SatelliteIcon from '@mui/icons-material/SatelliteAlt';
+import IoTIcon from '@mui/icons-material/Sensors';
+import AppsIcon from '@mui/icons-material/Apps';
 
 const drawerWidth = 240;
-
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
@@ -37,10 +32,10 @@ const AppBar = styled(MuiAppBar, {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
-  height: '65px', // Increase height for a larger header
-  backgroundColor: '#120639', // Main theme color
+  height: '65px',
+  backgroundColor: '#120639',
   display: 'flex',
-  justifyContent: 'center', // Align items centrally
+  justifyContent: 'space-between',
   ...(open && {
     width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: `${drawerWidth}px`,
@@ -55,29 +50,27 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
   justifyContent: 'flex-end',
 }));
 
-export default function PersistentDrawerLeft({userData,onLogout}) {
+export default function PersistentDrawerLeft() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [selectedItem, setSelectedItem] = React.useState('Dashboard'); // Track the selected item
-  
+  const [selectedItem, setSelectedItem] = React.useState('Dashboard');
+
   const handleDrawerToggle = () => setOpen(!open);
   const handleItemClick = (text) => setSelectedItem(text);
   const handleLogout = () => window.location.reload();
-  
 
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" sx={{ backgroundColor: '#120639',width: `calc(100% - ${open ? drawerWidth : 60}px)` }}>
+      <AppBar position="fixed" open={open}>
         <Toolbar>
           <IconButton
             color="inherit"
-            aria-label="open drawer"
+            aria-label="toggle drawer"
             onClick={handleDrawerToggle}
             edge="start"
             sx={{ mr: 2 }}
@@ -87,40 +80,35 @@ export default function PersistentDrawerLeft({userData,onLogout}) {
             Smart City Traffic Management
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
-
-          {/* User details section (icon + username) */}
-          <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
-            <AccountCircle sx={{ mr: 1 }} /> {/* User icon */}
-            <Typography variant="subtitle1" noWrap>
-              {userData?.username || 'Guest'} {/* Dynamic username */}
-            </Typography>
-          </Box>
-
           <Button color="inherit" onClick={handleLogout}>Logout</Button>
         </Toolbar>
       </AppBar>
       <Drawer
         sx={{
-          width: open ? drawerWidth : 60,
+          width: drawerWidth,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: open ? drawerWidth : 60,
+            width: `${open?drawerWidth:120}`,
             boxSizing: 'border-box',
-            backgroundColor: '#120639', // Match the theme color
+            backgroundColor: '#120639',
             color: '#FFFFFF',
             borderRight: '2px solid white',
             height: '100vh',
-            // position:'relative',
-            overflowX: 'hidden', 
+            overflowX: 'hidden',
+            // position: 'fixed',
+            top: 0,
+            left: 0,
+            zIndex: theme.zIndex.drawer,
             transition: theme.transitions.create('width', {
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.standard,
             }),
+            whiteSpace: 'nowrap',
           },
         }}
         variant="persistent"
         anchor="left"
-        open={true}
+        open={true} // Keep the drawer always visible
       >
         <DrawerHeader>
           <IconButton onClick={handleDrawerToggle} sx={{ color: '#FFFFFF' }}>
@@ -128,18 +116,11 @@ export default function PersistentDrawerLeft({userData,onLogout}) {
             {/* {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />} */}
           </IconButton>
         </DrawerHeader>
-        <Divider sx={{ borderColor: '#FFFFFF' }} />
         <List>
-        {['Dashboard', 'Drone Station', 'Satellite Data', 'IoT Station', 'Traffic Camera'].map((text, index) => (
+          {['Dashboard', 'Drone Station', 'Satellite Data', 'IoT Station', 'Traffic Camera'].map((text) => (
             <ListItem key={text} disablePadding onClick={() => handleItemClick(text)}>
-              <ListItemButton sx={{
-                  backgroundColor: selectedItem === text ? '#1a1a3d' : 'transparent', // Highlight selected
-                  '&:hover': {
-                    backgroundColor: selectedItem === text ? '#1a1a3d' : '#383858',
-                  },
-                }}
-                selected={selectedItem === text}>
-                <ListItemIcon sx={{ color: '#FFFFFF' }}>
+              <ListItemButton>
+                <ListItemIcon sx={{ color: '#FFFFFF', minWidth: 'auto', justifyContent: 'center' }}>
                   {text === 'Drone Station' && <DroneIcon sx={{ fontSize: '2rem' }} />}
                   {text === 'Satellite Data' && <SatelliteIcon sx={{ fontSize: '2rem' }} />}
                   {text === 'IoT Station' && <IoTIcon sx={{ fontSize: '2rem' }} />}
@@ -151,9 +132,8 @@ export default function PersistentDrawerLeft({userData,onLogout}) {
             </ListItem>
           ))}
         </List>
-        {/* <Divider sx={{ borderColor: '#FFFFFF' }} /> */}
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1 , ml: open ? drawerWidth : 60}}>
+      <Box component="main" sx={{ flexGrow: 1, ml: open ? drawerWidth : 60 }}>
         <Toolbar />
         <ContentSection selectedItem={selectedItem} />
       </Box>

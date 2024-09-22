@@ -1,0 +1,37 @@
+/* Global Styles */
+.App {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  /* Background image for login and signup screens */
+  .auth-background {
+    background-image: url('../Images/Traffic2.jpeg');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Unique background color for the rest of the application */
+  .app-background {
+    background-color: #120639; /* Choose your unique background color */
+    min-height: 100vh;
+  }
+  /* White borders between sections */
+  
+  .MuiDrawer-paper {
+    border-right: 2px solid white;
+  }
+  
+  .MuiAppBar-root {
+    border-bottom: 2px solid white;
+  }
+/*   
+  .MuiBox-root {
+    border-left: 2px solid white;
+  } */  

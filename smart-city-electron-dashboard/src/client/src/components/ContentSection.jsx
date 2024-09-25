@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Dashboard from '../components/Dashboard'; 
 import IoTSection from '../components/IOT';
+import CCTVSection from '../components/CCTV';
 
 const ContentSection = ({ selectedItem }) => {
   const [videoUrl, setVideoUrl] = useState('');
@@ -29,7 +30,9 @@ const ContentSection = ({ selectedItem }) => {
         <IoTSection />
       )
     case 'Traffic Camera':
-      return <div>Traffic Camera Content</div>;
+      return (
+        <CCTVSection videoUrl={videoUrl} handleFileUpload={handleFileUpload} />  // Pass the videoUrl and file upload handler as props
+      );
     default:
       return null;
   }

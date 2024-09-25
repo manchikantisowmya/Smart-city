@@ -42,6 +42,20 @@
     margin-right: 5px; 
   }
 
+  .role-input-group{
+    align-items: center;
+    font-weight: bold;
+  }
+
+  .role-input-group select{
+    padding: 12px 12px 12px 0px;
+    border: 1px solid #aaa; 
+    border-radius: 5px;
+    font-size: 14px;
+    color: #333; 
+    flex: 1;
+  }
+
   .signup-button {
     width: 100%;
     padding: 12px;

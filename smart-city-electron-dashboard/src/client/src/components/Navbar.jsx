@@ -67,7 +67,8 @@ export default function PersistentDrawerLeft({userData,onLogout}) {
   
   const handleDrawerToggle = () => setOpen(!open);
   const handleItemClick = (text) => setSelectedItem(text);
-  const handleLogout = () => window.location.reload();
+  const capitalizedName = (userData.user.fname.charAt(0).toUpperCase() + userData.user.fname.slice(1))  +' ' +  userData.user.lname.charAt(0).toUpperCase() + userData.user.lname.slice(1)
+  // const handleLogout = () => window.location.reload();
   
 
   return (
@@ -88,15 +89,22 @@ export default function PersistentDrawerLeft({userData,onLogout}) {
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
 
-          {/* User details section (icon + username) */}
           <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
-            <AccountCircle sx={{ mr: 1 }} /> {/* User icon */}
-            <Typography variant="subtitle1" noWrap>
-              {userData?.username || 'Guest'} {/* Dynamic username */}
-            </Typography>
+            <Box sx={{ display: 'flex', flexDirection:'column', alignItems: 'center', mr: 2 }}>
+              
+              <Typography variant="subtitle1" noWrap>
+                {capitalizedName} 
+              </Typography>
+              <Typography variant="subtitle2" noWrap>
+                {userData.user.role_name} 
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', flexDirection:'column', alignItems: 'center'}}>
+              <AccountCircle sx={{ fontSize:40}} /> 
+              <Button color="inherit" onClick={onLogout}>Logout</Button>
+            </Box>
           </Box>
-
-          <Button color="inherit" onClick={handleLogout}>Logout</Button>
+          
         </Toolbar>
       </AppBar>
       <Drawer

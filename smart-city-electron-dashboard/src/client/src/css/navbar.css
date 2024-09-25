@@ -41,3 +41,33 @@
 .MuiListItemText-root {
   display: none; /* Hide text in collapsed state */
 }
+
+.user-display {
+  display: flex;
+  align-items: center;
+  background-color: #120639; /* Matching the background in your screenshot */
+  padding: 10px;
+  border-radius: 50px; /* Rounded corners */
+  color: #ffffff; /* White text */
+}
+
+.user-info {
+  margin-right: 10px;
+}
+
+.user-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.user-role {
+  font-size: 12px;
+  margin: 0;
+}
+
+.user-icon {
+  background-color: #ccc; /* Placeholder for the icon background */
+  border-radius: 50%;
+  padding: 5px;
+}

@@ -1,7 +1,7 @@
 // Signup.js
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import '../css/sign-up.css';
-import { signupUser } from '../api/signup/signup.js';
+import { signupUser,fetchSignUpRoles } from '../api/signup/signup.js';
 
 function Signup({ onSignupSuccess, onLoginClick }) {
   const [firstName, setFirstName] = useState('');
@@ -10,7 +10,28 @@ function Signup({ onSignupSuccess, onLoginClick }) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [role_id, setSelectedRoleId] = useState('');
+  const [role_name, setSelectedRoleName] = useState('');
+  const [roles, setRoles] = useState([]); // Store fetched roles
 
+  const handleRoleChange=(e)=>{
+    const selectedRoleId = parseInt(e.target.value); // Get the roleId from value
+    const selectedRoleName = e.target.options[e.target.selectedIndex].text; // Get roleName from data-name attribute
+
+    setSelectedRoleId(selectedRoleId);  // Update roleId state
+    setSelectedRoleName(selectedRoleName);  // Update roleName state
+  }
+  useEffect(()=>{
+    const fetchRoles = async () => {
+      try {
+        const response = await fetchSignUpRoles(); 
+        setRoles(response); // Store roles in state
+      } catch (error) {
+        console.error('Error fetching roles:', error);
+      }
+    };
+    fetchRoles();
+  },[])
   const validateForm = () => {
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
       setError('All fields are required');
@@ -27,7 +48,7 @@ function Signup({ onSignupSuccess, onLoginClick }) {
     e.preventDefault();      
     if (validateForm()) {
       try {
-        const userData = await signupUser({ firstName, lastName, email, password });
+        const userData = await signupUser({ firstName, lastName, email, password, role_id, role_name });
         onSignupSuccess(userData);
       } catch (error) {
         console.log('Error signing up:', error);
@@ -49,6 +70,16 @@ function Signup({ onSignupSuccess, onLoginClick }) {
         <div className="input-group">
           <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
           <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+        </div>
+        {/* Roles Dropdown */}
+        <div className="input-group role-input-group">
+          {/* <label htmlFor="role-select">User Role</label> */}
+          <select id='role-select' value={role_id} onChange={(e) => handleRoleChange(e)}>
+            <option value="" disabled selected hidden>Select Role</option>
+            {roles.map((role) => (
+              <option key={role.role_id} value={role.role_id}>{role.role_name}</option> // Ensure role has 'name'
+            ))}
+          </select>
         </div>
         {error && <p className="error-message">{error}</p>}
         <button type="submit" className="signup-button">Sign Up</button>

@@ -1,12 +1,20 @@
 // Login.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../css/login.css';
 import { loginUser } from '../api/login/login.js';
 
-function Login({ onLoginSuccess, onSignupClick }) {
+function Login({ onLoginSuccess, onSignupClick, resetLoginForm }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(()=>{
+    if(resetLoginForm){
+      setUsername('');
+      setPassword('');
+      setError('');
+    }
+  }, [resetLoginForm]);
 
   const validateForm = () => {
     if (!username || !password) {
@@ -21,8 +29,9 @@ function Login({ onLoginSuccess, onSignupClick }) {
     e.preventDefault();
     if (validateForm()) {
         try {
-            const userData = await loginUser(username, password);
-            onLoginSuccess(userData);
+            const response = await loginUser(username, password);
+            localStorage.setItem('token', response.token);
+            onLoginSuccess(response);
           } catch (error) {
             setError('Invalid credentials');
           }

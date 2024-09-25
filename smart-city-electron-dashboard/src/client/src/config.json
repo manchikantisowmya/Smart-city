@@ -1,0 +1,9 @@
+{
+    "development": {
+      "BASE_URL": "http://localhost:5002/api/auth"
+    },
+    "production": {
+      "BASE_URL": "https://your-production-domain.com/api/auth"
+    }
+  }
+  

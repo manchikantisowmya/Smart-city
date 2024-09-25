@@ -1,22 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, List, ListItem, ListItemText, CircularProgress } from '@mui/material';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import CameraIcon from '@mui/icons-material/Videocam';
-import L from 'leaflet';
-import ReactDOMServer from 'react-dom/server';
 import axios from 'axios'; // Use Axios to fetch data from backend
-
-// Function to create custom CCTV icon using Material-UI
-const createCCTVIcon = () => {
-  const iconHTML = ReactDOMServer.renderToString(<CameraIcon style={{ color: '#ff0000', fontSize: '2rem' }} />);
-  return L.divIcon({
-    html: iconHTML,
-    className: 'custom-cctv-icon',
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-  });
-};
 
 export default function CCTVDashboard() {
   const [cameras, setCameras] = useState([]);
@@ -84,7 +69,6 @@ export default function CCTVDashboard() {
           sx={{ color: 'white', '& .MuiListItemText-secondary': { color: 'white' } }}
         />
       </ListItem>
-
               ))}
             </List>
           )}
@@ -114,25 +98,11 @@ export default function CCTVDashboard() {
 
       {/* Main Map Area */}
       <Box sx={{ flexGrow: 1, position: 'relative', marginLeft: 0 }}>
-        <MapContainer
-          center={[37.7749, -122.4194]} // Default center on map
-          zoom={10}
-          scrollWheelZoom={false}
-          style={{ height: '100%', width: '100%' }}
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          />
-          {cameras.map((camera) => (
-            <Marker key={camera.camera_id} position={[camera.lat, camera.lng]} icon={createCCTVIcon()}>
-              <Popup>
-                <Typography>{camera.camera_name}</Typography>
-                <Typography variant="caption">Location: {camera.nearby_place}</Typography>
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
+        <iframe
+          src="https://cwwp2.dot.ca.gov/vm/iframemap.htm"
+          style={{ height: '100%', width: '100%', border: 'none' }}
+          title="CCTV Map"
+        />
       </Box>
     </Box>
   );

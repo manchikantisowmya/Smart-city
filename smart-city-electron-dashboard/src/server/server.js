@@ -9,41 +9,25 @@ const authRoutes = require('./routes/auth');
 const app = express();
 const PORT = process.env.PORT || 5002;
 
-// const corsOptions = {
-//   origin: 'http://localhost:3000', // Replace with your frontend URL
-//   methods: ['GET', 'POST'], // Specify sallowed HTTP methods
-// };
-
-// app.use(cors(corsOptions));
-
-
 // Middleware
 app.use(cors());
 app.use(express.json());
 
 mongoose.set('strictQuery', false);
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI, {
+// MongoDB URI from environment variable
+const mongoUri = process.env.MONGODB_URI;
+
+// MongoDB Connection (using mongoose)
+mongoose.connect(mongoUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-  .then(() => console.log('Connected to MongoDB Atlas'))
-  .catch((err) => console.log('Error connecting to MongoDB:', err));
+  .then(() => console.log('Connected to MongoDB Atlas (Mongoose)'))
+  .catch((err) => console.log('Error connecting to MongoDB (Mongoose):', err));
 
-// API Routes
-app.use('/api/auth', authRoutes);
-
-// Serve the React frontend files (important for production)
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../client/build')));
-
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
-  });
-}
-// MongoDB connection
-const client = new MongoClient(process.env.MONGODB_URI || 'mongodb+srv://SCT:data298B@cluster0.fcat7.mongodb.net/?retryWrites=true&w=majority', {
+// MongoClient connection for other operations
+const client = new MongoClient(mongoUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -55,9 +39,9 @@ const connectToDatabase = async () => {
   try {
     await client.connect();
     db = client.db(dbName);
-    console.log('Connected to database');
+    console.log('Connected to database (MongoClient)');
   } catch (err) {
-    console.error('Error connecting to MongoDB:', err);
+    console.error('Error connecting to MongoDB (MongoClient):', err);
   }
 };
 

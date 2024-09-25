@@ -12,7 +12,7 @@ export default function CCTVDashboard() {
   useEffect(() => {
     const fetchCameras = async () => {
       try {
-        const response = await axios.get('http://localhost:5002/api/cameras');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/cameras`);
         console.log(response.data);  // Log the fetched data
         setCameras(response.data);
       } catch (error) {
@@ -26,7 +26,7 @@ export default function CCTVDashboard() {
   const handleCameraClick = async (camera_id) => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:5002/api/cameras/${camera_id}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/cameras/${camera_id}`);
       setSelectedCamera(response.data);
       setLoading(false);
     } catch (error) {
@@ -45,30 +45,30 @@ export default function CCTVDashboard() {
             CCTV Cameras
           </Typography>
           {loading ? (
-  <CircularProgress color="inherit" sx={{ display: 'block', margin: 'auto' }} />
-) : cameras.length === 0 ? (
-  <Typography>No cameras found</Typography>
-) : (
-  <List sx={{ p: 0 }}>
-    {cameras.map((camera) => (
-      <ListItem
-        key={camera.camera_id}
-        button
-        onClick={() => handleCameraClick(camera.camera_id)}
-        sx={{
-          backgroundColor: selectedCamera?.camera_id === camera.camera_id ? '#808080' : 'transparent',
-          '&:hover': { backgroundColor: '#383858' },
-          color: 'white',
-          margin: 0,
-          padding: '8px 12px',
-        }}
-      >
-        <ListItemText
-          primary={camera.camera_name}
-          secondary={`Location: ${camera.nearby_place}`}
-          sx={{ color: 'white', '& .MuiListItemText-secondary': { color: 'white' } }}
-        />
-      </ListItem>
+            <CircularProgress color="inherit" sx={{ display: 'block', margin: 'auto' }} />
+          ) : cameras.length === 0 ? (
+            <Typography>No cameras found</Typography>
+          ) : (
+            <List sx={{ p: 0 }}>
+              {cameras.map((camera) => (
+                <ListItem
+                  key={camera.camera_id}
+                  button
+                  onClick={() => handleCameraClick(camera.camera_id)}
+                  sx={{
+                    backgroundColor: selectedCamera?.camera_id === camera.camera_id ? '#808080' : 'transparent',
+                    '&:hover': { backgroundColor: '#383858' },
+                    color: 'white',
+                    margin: 0,
+                    padding: '8px 12px',
+                  }}
+                >
+                  <ListItemText
+                    primary={camera.camera_name}
+                    secondary={`Location: ${camera.nearby_place}`}
+                    sx={{ color: 'white', '& .MuiListItemText-secondary': { color: 'white' } }}
+                  />
+                </ListItem>
               ))}
             </List>
           )}

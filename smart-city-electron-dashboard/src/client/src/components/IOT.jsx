@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Typography, List, ListItem, ListItemText } from '@mui/material';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import IoTIcon from '@mui/icons-material/Sensors'; // IoT Icon from Material-UI
+import IoTIcon from '@mui/icons-material/Sensors';
 import L from 'leaflet';
 import ReactDOMServer from 'react-dom/server';
 
@@ -21,8 +21,8 @@ const createIoTIcon = () => {
   return L.divIcon({
     html: iconHTML,
     className: 'custom-iot-icon',
-    iconSize: [32, 32],  // Adjust size of the icon container
-    iconAnchor: [16, 32],  // Adjust anchor to place icon properly on the map
+    iconSize: [32, 32],  
+    iconAnchor: [16, 32], 
   });
 };
 
@@ -50,9 +50,9 @@ export default function IoTSection() {
               sx={{
                 backgroundColor: selectedDevice.id === device.id ? '#808080' : 'transparent',
                 '&:hover': { backgroundColor: '#383858' },
-                color: 'white', // Text color white
-                margin: 0, // Remove margin
-                padding: '8px 12px', // Adjust padding for compact view
+                color: 'white', 
+                margin: 0, 
+                padding: '8px 12px', 
               }}
             >
               <ListItemText

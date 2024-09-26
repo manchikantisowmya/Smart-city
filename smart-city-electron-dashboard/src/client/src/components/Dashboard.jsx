@@ -3,7 +3,7 @@ import { Box, Grid, Card, CardContent, Typography } from '@mui/material';
 import { Pie, Line } from 'react-chartjs-2';
 import { getDashboardData } from '../api/dashboard/dashboard.js';
 import { Chart, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement } from 'chart.js';
-import { Toys, DirectionsCar, FlightTakeoff, Person, Warning } from '@mui/icons-material';
+import { Toys, FlightTakeoff, Person, Warning } from '@mui/icons-material';
 
 // Register necessary Chart.js components
 Chart.register(
@@ -168,12 +168,12 @@ export default function Dashboard() {
                           size:'16',
                           weight:'bold'
                         }
-                      } // Position the labels at the top
+                      } 
                     },
                   },
                 }}
-                height={300} // Adjust the height to match the line chart
-                width={100} // Adjust the width as needed
+                height={300} 
+                width={100} 
               />
             </CardContent>
           </Card>
@@ -183,7 +183,7 @@ export default function Dashboard() {
           <Card style={cardStyle}>
             <CardContent>
               <Line data={lineData} options={{
-                  maintainAspectRatio: false, // To allow flexible sizing
+                  maintainAspectRatio: false, 
                   plugins: {
                     legend: {
                       display: true,
@@ -194,32 +194,32 @@ export default function Dashboard() {
                           size:'16',
                           weight:'bold'
                         }
-                      } // Position the labels at the top
+                      } 
                     },
                   },
                   scales: {
                     x: {
                       ticks: {
-                        color: '#B0E57C', // Set x-axis label color to white
+                        color: '#B0E57C', 
                         font: {
-                          size: 16, // Increase font size for x-axis labels
+                          size: 16, 
                         },
                       },
                       grid: {
-                        color: 'rgba(255, 255, 255, 0.2)', // Adjust grid line color if necessary
+                        color: 'rgba(255, 255, 255, 0.2)', 
                       },
                     },
                     y: {
                       ticks: {
-                        color: '#B0E57C', // Set y-axis label color to white
+                        color: '#B0E57C', 
                         font: {
-                          size: 16, // Increase font size for y-axis labels
+                          size: 16, 
                         },
                       },
                       grid: {
-                        color: 'rgba(255, 255, 255, 0.2)', // Adjust grid line color if necessary
+                        color: 'rgba(255, 255, 255, 0.2)', 
                       },
-                      beginAtZero: true, // Start y-axis at 0
+                      beginAtZero: true, 
                     },
                   },
                 }}

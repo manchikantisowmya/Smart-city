@@ -164,4 +164,14 @@ router.get('/camerabyId/:camera_id', async (req, res) => {
   }
 });
 
+router.get('/drones',async(req,res)=>{
+  try {
+    const drones = await Drone.find();
+    res.json(drones);
+  } catch (err) {
+    console.error('Error fetching drones:', err);
+    res.status(500).send('Error fetching drones');
+  }
+});
+
 module.exports = router;

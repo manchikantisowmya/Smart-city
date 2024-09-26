@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, List, ListItem, ListItemText, CircularProgress } from '@mui/material';
 import 'leaflet/dist/leaflet.css';
-import axios from 'axios'; // Use Axios to fetch data from backend
+import { getCameras,getCameraById } from '../api/cctv.js';
 
 export default function CCTVDashboard() {
   const [cameras, setCameras] = useState([]);
@@ -12,9 +12,8 @@ export default function CCTVDashboard() {
   useEffect(() => {
     const fetchCameras = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/cameras`);
-        console.log(response.data);  // Log the fetched data
-        setCameras(response.data);
+        const response = await getCameras();
+        setCameras(response);
       } catch (error) {
         console.error('Error fetching cameras', error);
       }
@@ -26,7 +25,7 @@ export default function CCTVDashboard() {
   const handleCameraClick = async (camera_id) => {
     setLoading(true);
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/cameras/${camera_id}`);
+      const response = await getCameraById(camera_id);
       setSelectedCamera(response.data);
       setLoading(false);
     } catch (error) {

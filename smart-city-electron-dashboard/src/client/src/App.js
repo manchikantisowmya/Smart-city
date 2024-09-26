@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import Login from './components/Login'; 
 import Signup from './components/SignUp';
 import Navigation from './components/Navbar'; 
@@ -9,6 +9,15 @@ function App() {
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [userData, setUserData] = useState(null);
   const [resetLoginForm, setResetLoginForm] = useState(false);
+
+  // Check localStorage for userData when the app loads
+  useEffect(() => {
+    const storedUserData = localStorage.getItem('userData');
+    if (storedUserData) {
+      setUserData(JSON.parse(storedUserData));
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   // Function to handle successful login
   const handleLoginSuccess = (userData) => {
@@ -32,6 +41,7 @@ function App() {
     setIsLoggedIn(false);
     setUserData(null);
     setResetLoginForm(true);
+    localStorage.removeItem('userData');
   };
 
   // Determine the class to apply based on login/signup state

@@ -141,7 +141,7 @@ export default function PersistentDrawerLeft({userData,onLogout}) {
         {['Dashboard', 'Drone Station', 'Satellite Data', 'IoT Station', 'Traffic Camera'].map((text, index) => (
             <ListItem key={text} disablePadding onClick={() => handleItemClick(text)}>
               <ListItemButton sx={{
-                  backgroundColor: selectedItem === text ? '#1a1a3d' : 'transparent', // Highlight selected
+                  backgroundColor: selectedItem === text ? 'rgb(255,255,255,0.25' : 'transparent', // Highlight selected
                   '&:hover': {
                     backgroundColor: selectedItem === text ? '#1a1a3d' : '#383858',
                   },
@@ -161,7 +161,7 @@ export default function PersistentDrawerLeft({userData,onLogout}) {
         </List>
         {/* <Divider sx={{ borderColor: '#FFFFFF' }} /> */}
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1 , ml: open ? drawerWidth : 60}}>
+      <Box component="main" sx={{ flexGrow: 1}}>
         <Toolbar />
         <ContentSection selectedItem={selectedItem} />
       </Box>

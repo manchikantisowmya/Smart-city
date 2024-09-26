@@ -86,9 +86,7 @@ export default function CCTVDashboard() {
               <Typography>ID: {selectedCamera.camera_id}</Typography>
               <Typography>Route: {selectedCamera.route}</Typography>
               <Typography>Location: {selectedCamera.nearby_place}</Typography>
-              <Typography>
-                Live Stream: <a href={selectedCamera.live_streaming_url} target="_blank" rel="noopener noreferrer">View</a>
-              </Typography>
+              
             </>
           ) : (
             <Typography>Select a camera to view details</Typography>

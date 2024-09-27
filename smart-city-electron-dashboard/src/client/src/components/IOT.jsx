@@ -7,19 +7,29 @@ import L from 'leaflet';
 import ReactDOMServer from 'react-dom/server';
 import { getIotData } from '../api/iot.js';
 
-// Function to convert the IoTIcon component to an HTML string for Leaflet
-const createIoTIcon = () => {
-  const iconHTML = ReactDOMServer.renderToString(
-    <IoTIcon style={{ color: '#ff5722', fontSize: '2rem' }} />
-  );
-  
+const get_marker_color = (speed, flow) => {
+  if (speed > 25 && flow < 500) {
+    return 'green'; // Good condition
+  } else if (10 <= speed <= 25 || (500 <= flow && flow < 1000)) {
+    return 'orange'; // Average condition
+  } else {
+    return 'red'; // Congested condition
+  }
+};
+
+
+const createIoTIcon = (speed, flow) => {
+  const color = get_marker_color(speed, flow);
+  const iconHTML = ReactDOMServer.renderToString(<IoTIcon style={{ color: color, fontSize: '2rem' }} />);
+
   return L.divIcon({
     html: iconHTML,
     className: 'custom-iot-icon',
-    iconSize: [32, 32],  // Adjust size of the icon container
-    iconAnchor: [16, 32],  // Adjust anchor to place icon properly on the map
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
   });
 };
+
 
 export default function IoTSection() {
   const [iotData, setIotData] = useState([]);
@@ -56,8 +66,7 @@ export default function IoTSection() {
         <List sx={{ p: 0 }}>
           {iotData.map((device) => (
             <ListItem
-              key={device.id}
-              button
+              key={device._id}
               onClick={() => handleDeviceClick(device)}
               sx={{
                 backgroundColor: selectedDevice && selectedDevice.id === device.id ? '#808080' : 'transparent',
@@ -68,8 +77,8 @@ export default function IoTSection() {
               }}
             >
               <ListItemText
-                primary={`IOT ${device.id}`}
-                secondary={`ID: ${device.id}`}
+                primary={`IOT ${device.Location}`}
+                secondary={`ID: ${device._id}`}
                 sx={{ color: 'white', '& .MuiListItemText-secondary': { color: 'white' } }} // Secondary text in white
               />
             </ListItem>
@@ -81,7 +90,7 @@ export default function IoTSection() {
       <Box sx={{ flexGrow: 1, position: 'relative' }}>
         {selectedDevice && (
           <MapContainer
-            center={[selectedDevice.lat, selectedDevice.lng]}
+            center={[selectedDevice.Latitude, selectedDevice.Longitude]}
             zoom={12}
             scrollWheelZoom={false}
             style={{ height: '100%', width: '100%' }}
@@ -93,12 +102,12 @@ export default function IoTSection() {
             {iotData.map((device) => (
               <Marker
                 key={device.id}
-                position={[device.lat, device.lng]}
-                icon={createIoTIcon()}  // Use custom IoT marker with Material UI icon
+                position={[device.Latitude, device.Longitude]}
+                icon={createIoTIcon(device["Current Speed"], device["Free Flow Speed"])}  // Use custom IoT marker with Material UI icon
               >
                 <Popup>
                   <Typography>{device.id}</Typography>
-                  <Typography variant="caption">Location: {device.location}</Typography>
+                  <Typography variant="caption">Location: {device.Location}</Typography>
                 </Popup>
               </Marker>
             ))}
@@ -122,9 +131,9 @@ export default function IoTSection() {
               Device Details
             </Typography>
             <Typography>ID: {selectedDevice.id}</Typography>
-            <Typography>Location: {selectedDevice.location}</Typography>
-            <Typography>Latitude: {selectedDevice.lat}</Typography>
-            <Typography>Longitude: {selectedDevice.lng}</Typography>
+            <Typography>Location: {selectedDevice.Location}</Typography>
+            <Typography>Latitude: {selectedDevice.Latitude}</Typography>
+            <Typography>Longitude: {selectedDevice.Longitude}</Typography>
           </Box>
         )}
       </Box>

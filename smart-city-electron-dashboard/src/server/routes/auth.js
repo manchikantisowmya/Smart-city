@@ -6,7 +6,7 @@ const Role = require('../models/Role');
 const Drone = require('../models/Drone');
 const DroneMissions = require('../models/DroneMissions');
 const CaltransCamera = require('../models/CaltransCamera');
-const iotData= require('../models/iotData');
+const IoTData= require('../models/iotData');
 const router = express.Router();
 
 // Route to get roles from the database
@@ -175,9 +175,9 @@ router.get('/drones', async (req, res) => {
   }
 });
 
-router.get('/IotData ', async (req, res) => {
+router.get('/iotData', async (req, res) => {
   try {
-    const iotdata = await IotData.find();
+    const iotdata = await IoTData.find();
     res.json(iotdata);
   } catch (err) {
     console.error('Error fetching IotData :', err);

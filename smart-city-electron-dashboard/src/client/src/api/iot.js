@@ -8,7 +8,7 @@ const BASE_URL = config[env].BASE_URL;
 export const getIotData = async () => {
   try {
     // return true;
-    const response = await axios.get(`${BASE_URL}/IotData`);
+    const response = await axios.get(`${BASE_URL}/iotData`);
     return response.data;
   } catch (error) {
     throw new Error(error.response.data.message);

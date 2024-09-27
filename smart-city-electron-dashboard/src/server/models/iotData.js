@@ -2,22 +2,23 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const IoTDataSchema = new Schema({
-  Latitude: {
+  _id: mongoose.Schema.Types.ObjectId,
+  "Latitude": {
     type: Number
   },
-  Longitude: {
+"Longitude": {
     type: Number
   },
-  Location: {
+  "Location": {
     type: String
   },
-  CurrentSpeed: {
+  "Current Speed": {
     type: Number
   },
-  FreeFlowSpeed: {
+  "Free Flow Speed": {
     type: Number
   },
-  JamFactor: {
+  "Jam Factor": {
     type: Number
   },
 }, { collection: 'IoTData' });

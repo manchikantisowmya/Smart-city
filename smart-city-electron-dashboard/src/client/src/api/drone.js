@@ -15,3 +15,13 @@ export const getDrones = async () => {
   }
 };
 
+
+export const getDroneMissions = async (drone_id) => {
+  try {
+    // return true;
+    const response = await axios.get(`${BASE_URL}/droneMissions/${drone_id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message);
+  }
+};

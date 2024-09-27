@@ -6,6 +6,7 @@ const Role = require('../models/Role');
 const Drone = require('../models/Drone');
 const DroneMissions = require('../models/DroneMissions');
 const CaltransCamera = require('../models/CaltransCamera');
+const iotData= require('../models/iotData');
 const router = express.Router();
 
 // Route to get roles from the database
@@ -164,9 +165,30 @@ router.get('/camerabyId/:camera_id', async (req, res) => {
   }
 });
 
-router.get('/drones',async(req,res)=>{
+router.get('/drones', async (req, res) => {
   try {
     const drones = await Drone.find();
+    res.json(drones);
+  } catch (err) {
+    console.error('Error fetching drones:', err);
+    res.status(500).send('Error fetching drones');
+  }
+});
+
+router.get('/IotData ', async (req, res) => {
+  try {
+    const iotdata = await IotData.find();
+    res.json(iotdata);
+  } catch (err) {
+    console.error('Error fetching IotData :', err);
+    res.status(500).send('Error fetching IotData ');
+  }
+});
+
+router.get('/droneMissions/:drone_id',async(req,res)=>{
+  const {drone_id}=req.params;
+  try {
+    const drones = await DroneMissions.find({drone_id});
     res.json(drones);
   } catch (err) {
     console.error('Error fetching drones:', err);

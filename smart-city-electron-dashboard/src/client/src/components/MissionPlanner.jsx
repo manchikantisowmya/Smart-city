@@ -3,28 +3,40 @@ import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import { Grid, Box, Typography, Button, Card, CardContent } from '@mui/material';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { Toys } from '@mui/icons-material';
 import { getDroneMissions } from '../api/drone';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { Pie } from 'react-chartjs-2';
+import MapSearchControl from '../Utilities/MapSearchControl';
 
 const createWaypointIcon = (missionStatus) => {
     let color;
 
     switch (missionStatus) {
         case 'Completed':
-            color = '#4caf50'; // Green for Completed
+            color = '#f44336'; // Green for Completed
             break;
         case 'Planned':
-            color = '#2196f3'; // Blue for In Progress
+            color = '#4caf50';
             break;
         case 'Failed':
-            color = '#f44336'; // Red for Failed
+            color = '#ff9800'; //orange
             break;
         default:
             color = '#9e9e9e'; // Grey for other statuses
             break;
     }
-    const iconHTML = renderToStaticMarkup(<Toys style={{ color: color, fontSize: '3rem' }} />);
+    const droneIconSVG = (
+        <svg
+            width="60"
+            height="60"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            fill={color}>
+            <path d="M22 11h-1l-1-2h-6.25L16 12.5h-2L10.75 9H4c-.55 0-2-.45-2-1s1.5-2.5 3.5-2.5S7.67 6.5 9 7h12a1 1 0 0 1 1 1zM10.75 6.5L14 3h2l-2.25 3.5zM18 11V9.5h1.75L19 11zM3 19a1 1 0 0 1-1-1a1 1 0 0 1 1-1a4 4 0 0 1 4 4a1 1 0 0 1-1 1a1 1 0 0 1-1-1a2 2 0 0 0-2-2m8 2a1 1 0 0 1-1 1a1 1 0 0 1-1-1a6 6 0 0 0-6-6a1 1 0 0 1-1-1a1 1 0 0 1 1-1a8 8 0 0 1 8 8" />
+        </svg>
+    );
+
+    const iconHTML = renderToStaticMarkup(droneIconSVG);
     return L.divIcon({
         html: iconHTML,
         className: '',
@@ -61,6 +73,7 @@ const GridOverlay = () => {
 const MissionPlanner = ({ droneId, onBackToMonitoring }) => {
     const [missions, setMissions] = useState([]);
     const [allWaypoints, setAllWaypoints] = useState([]);
+    const [missionStatusData, setMissionStatusData] = useState({});
 
     useEffect(() => {
         const fetchMissions = async () => {
@@ -68,6 +81,7 @@ const MissionPlanner = ({ droneId, onBackToMonitoring }) => {
                 const response = await getDroneMissions(droneId); // API call to fetch missions
                 setMissions(response);
                 const waypointsArray = [];
+                const statusCounts = { Completed: 0, Planned: 0, Failed: 0 };
                 response.forEach((mission) => {
                     try {
                         const cleanedString = mission.mission_waypoints[0].replace(/\\"/g, '"');
@@ -76,11 +90,15 @@ const MissionPlanner = ({ droneId, onBackToMonitoring }) => {
                             ...waypoints,
                             mission_status: mission.mission_status
                         });
+                        if (statusCounts[mission.mission_status] !== undefined) {
+                            statusCounts[mission.mission_status] += 1;
+                        }
                     } catch (error) {
                         console.error('Error parsing mission waypoints:', error);
                     }
                 });
                 setAllWaypoints(waypointsArray);
+                setMissionStatusData(statusCounts);
             } catch (error) {
                 console.error('Error fetching missions:', error);
             }
@@ -89,10 +107,61 @@ const MissionPlanner = ({ droneId, onBackToMonitoring }) => {
         fetchMissions();
     }, [droneId]);
 
+    const pieData = {
+        labels: ['Completed', 'Planned', 'Failed'],
+        datasets: [
+            {
+                data: [missionStatusData.Completed, missionStatusData.Planned, missionStatusData.Failed],
+                backgroundColor: ['#f44336', '#4caf50', '#ff9800'],
+            },
+        ],
+    };
+
     return (
         <Grid container sx={{ height: '100vh', display: 'flex', flexDirection: 'row', backgroundColor: '#1a1a3d' }}>
             {/* Left Pane: Waypoints List and Back to Monitoring */}
             <Grid item xs={3} sx={{ display: 'flex', flexDirection: 'column', backgroundColor: '#120639', color: 'white', padding: '20px', overflowY: 'auto' }}>
+                <Box
+                    sx={{
+                        bottom: '10px',
+                        left: '100px',
+                        height:'150px',
+                        backgroundColor: '#120639',
+                        borderRadius: '10px',
+                        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                        zIndex: 1000,
+                    }}>
+                    <Pie
+                        data={pieData}
+                        options={{
+                            maintainAspectRatio: false,
+                            plugins: {
+                                datalabels:{
+                                    display:true,
+                                    color: '#fff',
+                                    font: {
+                                        size: 14,
+                                        weight: 'bold',
+                                      },
+                                    formatter: (value) => {
+                                        return `${value}`; 
+                                    },
+                                },
+                                legend: {
+                                    display: true,
+                                    position: 'right',
+                                    labels:{
+                                        color:'white',
+                                        font:{
+                                          size:'14',
+                                          weight:'bold'
+                                        }
+                                      } 
+                                },
+                            },
+                        }}
+                    />
+                </Box>
                 <Typography variant="h6">Drone {droneId}</Typography>
 
                 {missions.length > 0 && missions.map((mission, index) => {
@@ -137,6 +206,7 @@ const MissionPlanner = ({ droneId, onBackToMonitoring }) => {
                 <Box sx={{ height: '100%', width: '100%' }}>
                     <MapContainer center={allWaypoints.length > 0 ? [allWaypoints[0][0].lat, allWaypoints[0][0].long] : [37.31835840962726, -122.02360103248884]} zoom={10} style={{ height: '100%', width: '100%' }}>
                         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                        <MapSearchControl />
                         <GridOverlay />
                         {allWaypoints.length > 0 && allWaypoints.map((waypoint, index) => (
                             <Marker

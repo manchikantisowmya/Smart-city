@@ -21,7 +21,6 @@ import ListItemText from '@mui/material/ListItemText';
 // import MailIcon from '@mui/icons-material/Mail';
 import ContentSection from './ContentSection';
 import Button from '@mui/material/Button'
-import DroneIcon from '@mui/icons-material/Toys'; // Example icon for Drone Station
 import CameraIcon from '@mui/icons-material/VideoCameraFront'; // Camera Icon for Traffic Camera
 import SatelliteIcon from '@mui/icons-material/SatelliteAlt'; // Satellite Icon for Satellite Data
 import IoTIcon from '@mui/icons-material/Sensors'; // IoT Icon for IoT Station
@@ -147,8 +146,18 @@ export default function PersistentDrawerLeft({ userData, onLogout }) {
               }}
                 selected={selectedItem === text}>
                 <ListItemIcon sx={{ color: '#FFFFFF' }}>
-                  {text === 'Drone Station' && <DroneIcon sx={{ fontSize: '2rem' }} />}
-                  {text === 'Satellite Data' && <SatelliteIcon sx={{ fontSize: '2rem' }} />}
+                  {text === 'Drone Station' && (
+                    <Box
+                      component="span"
+                      sx={{ width: '2rem', height: '2rem', display: 'inline-block' }}
+                      dangerouslySetInnerHTML={{
+                        __html: `<svg width="40" height="40" viewBox="0 0 24 24"  xmlns="http://www.w3.org/2000/svg" fill="#FFFFFF">
+            <path d="M22 11h-1l-1-2h-6.25L16 12.5h-2L10.75 9H4c-.55 0-2-.45-2-1s1.5-2.5 3.5-2.5S7.67 6.5 9 7h12a1 1 0 0 1 1 1zM10.75 6.5L14 3h2l-2.25 3.5zM18 11V9.5h1.75L19 11zM3 19a1 1 0 0 1-1-1a1 1 0 0 1 1-1a4 4 0 0 1 4 4a1 1 0 0 1-1 1a1 1 0 0 1-1-1a2 2 0 0 0-2-2m8 2a1 1 0 0 1-1 1a1 1 0 0 1-1-1a6 6 0 0 0-6-6a1 1 0 0 1-1-1a1 1 0 0 1 1-1a8 8 0 0 1 8 8" />
+        </svg>`
+                      }}
+                    />
+                  )}
+                  {/* {text === 'Satellite Data' && <SatelliteIcon sx={{ fontSize: '2rem' }} />} */}
                   {text === 'IoT Station' && <IoTIcon sx={{ fontSize: '2rem' }} />}
                   {text === 'Traffic Camera' && <CameraIcon sx={{ fontSize: '2rem' }} />}
                   {text === 'Dashboard' && <AppsIcon sx={{ fontSize: '2rem' }} />}

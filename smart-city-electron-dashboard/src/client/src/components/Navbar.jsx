@@ -60,21 +60,21 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end',
 }));
 
-export default function PersistentDrawerLeft({userData,onLogout}) {
+export default function PersistentDrawerLeft({ userData, onLogout }) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState('Dashboard'); // Track the selected item
-  
+
   const handleDrawerToggle = () => setOpen(!open);
   const handleItemClick = (text) => setSelectedItem(text);
-  const capitalizedName = (userData.user.fname.charAt(0).toUpperCase() + userData.user.fname.slice(1))  +' ' +  userData.user.lname.charAt(0).toUpperCase() + userData.user.lname.slice(1)
+  const capitalizedName = (userData.user.fname.charAt(0).toUpperCase() + userData.user.fname.slice(1)) + ' ' + userData.user.lname.charAt(0).toUpperCase() + userData.user.lname.slice(1)
   // const handleLogout = () => window.location.reload();
-  
+
 
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" sx={{ backgroundColor: '#120639',width: `calc(100% - ${open ? drawerWidth : 60}px)` }}>
+      <AppBar position="fixed" sx={{ backgroundColor: '#120639', width: `calc(100% - ${open ? drawerWidth : 60}px)` }}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -90,21 +90,21 @@ export default function PersistentDrawerLeft({userData,onLogout}) {
           <Box sx={{ flexGrow: 1 }} />
 
           <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
-            <Box sx={{ display: 'flex', flexDirection:'column', alignItems: 'center', mr: 2 }}>
-              
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mr: 2 }}>
+
               <Typography variant="subtitle1" noWrap>
-                {capitalizedName} 
+                {capitalizedName}
               </Typography>
               <Typography variant="subtitle2" noWrap>
-                {userData.user.role_name} 
+                {userData.user.role_name}
               </Typography>
             </Box>
-            <Box sx={{ display: 'flex', flexDirection:'column', alignItems: 'center'}}>
-              <AccountCircle sx={{ fontSize:40}} /> 
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <AccountCircle sx={{ fontSize: 40 }} />
               <Button color="inherit" onClick={onLogout}>Logout</Button>
             </Box>
           </Box>
-          
+
         </Toolbar>
       </AppBar>
       <Drawer
@@ -119,7 +119,7 @@ export default function PersistentDrawerLeft({userData,onLogout}) {
             borderRight: '2px solid white',
             height: '100vh',
             // position:'relative',
-            overflowX: 'hidden', 
+            overflowX: 'hidden',
             transition: theme.transitions.create('width', {
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.standard,
@@ -128,24 +128,23 @@ export default function PersistentDrawerLeft({userData,onLogout}) {
         }}
         variant="persistent"
         anchor="left"
-        open={true}
-      >
+        open={true}>
         <DrawerHeader>
           <IconButton onClick={handleDrawerToggle} sx={{ color: '#FFFFFF' }}>
-          <MenuIcon />
+            <MenuIcon />
             {/* {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />} */}
           </IconButton>
         </DrawerHeader>
         <Divider sx={{ borderColor: '#FFFFFF' }} />
         <List>
-        {['Dashboard', 'Drone Station', 'Satellite Data', 'IoT Station', 'Traffic Camera'].map((text, index) => (
+          {['Dashboard', 'Drone Station', 'Satellite Data', 'IoT Station', 'Traffic Camera'].map((text, index) => (
             <ListItem key={text} disablePadding onClick={() => handleItemClick(text)}>
               <ListItemButton sx={{
-                  backgroundColor: selectedItem === text ? '#1a1a3d' : 'transparent', // Highlight selected
-                  '&:hover': {
-                    backgroundColor: selectedItem === text ? '#1a1a3d' : '#383858',
-                  },
-                }}
+                backgroundColor: selectedItem === text ? 'rgb(255,255,255,0.25' : 'transparent', // Highlight selected
+                '&:hover': {
+                  backgroundColor: selectedItem === text ? '#1a1a3d' : '#383858',
+                },
+              }}
                 selected={selectedItem === text}>
                 <ListItemIcon sx={{ color: '#FFFFFF' }}>
                   {text === 'Drone Station' && <DroneIcon sx={{ fontSize: '2rem' }} />}
@@ -161,7 +160,7 @@ export default function PersistentDrawerLeft({userData,onLogout}) {
         </List>
         {/* <Divider sx={{ borderColor: '#FFFFFF' }} /> */}
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1 , ml: open ? drawerWidth : 60}}>
+      <Box component="main" sx={{ flexGrow: 1, height: '100vh' }}>
         <Toolbar />
         <ContentSection selectedItem={selectedItem} />
       </Box>

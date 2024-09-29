@@ -30,7 +30,7 @@ function Login({ onLoginSuccess, onSignupClick, resetLoginForm }) {
     if (validateForm()) {
         try {
             const response = await loginUser(username, password);
-            localStorage.setItem('token', response.token);
+            localStorage.setItem('userData', JSON.stringify(response));
             onLoginSuccess(response);
           } catch (error) {
             setError('Invalid credentials');

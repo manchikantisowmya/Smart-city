@@ -60,6 +60,7 @@ const DroneMonitoring = () => {
     const [droneStatusData, setDroneStatusData] = useState(null);
     const [highwaysWithExits, setHighwaysWithExits] = useState(null);
     const mapRef = useRef(null);
+    const [filteredDroneStations, setFilteredDroneStations] = useState([]);
 
     useEffect(() => {
         const fetchDroneStations = async () => {
@@ -102,6 +103,7 @@ const DroneMonitoring = () => {
 
                 handleDroneClick(response[0]);
                 setDroneStations(response);
+                setFilteredDroneStations(response);
                 setDrones(distinctDrones);
                 setCities(distinctCities);
                 setStates(distinctStates);
@@ -130,8 +132,21 @@ const DroneMonitoring = () => {
     useEffect(() => {
         const fetchHighwaysWithExits = async () => {
             try {
-                const response = await getHighwaysWithExits(); // Fetch data from the API
-                setHighwaysWithExits(response);
+                const response = await getHighwaysWithExits();
+                const distinctHighways = response.reduce((acc, highway) => {
+                    const exists = acc.find(hwy => hwy.highway_number === highway.highway_number);
+                    if (!exists) {
+                        acc.push({
+                            highway_number: highway.highway_number,
+                            start_location: highway.start_location,
+                            end_location: highway.end_location,
+                            available_lanes: highway.available_lanes,
+                            exits: highway.exits,
+                        });
+                    }
+                    return acc;
+                }, []);
+                setHighwaysWithExits(distinctHighways);
             } catch (error) {
                 console.error('Error fetching dashboard data:', error);
             }
@@ -169,8 +184,19 @@ const DroneMonitoring = () => {
         }
     };
 
-    const handleSearch = (searchData) => {
-        console.log("Search Data:", searchData);
+    const handleSearch = (searchFields) => {
+        const filtered = droneStations.filter((station) => {
+            return (
+                (!searchFields.state || station.State === searchFields.state) &&
+                (!searchFields.city || station.City.trim() === searchFields.city) &&
+                (!searchFields.droneId || station.drone_id === searchFields.droneId) &&
+                (!searchFields.zip || station.ZipCode?.toString() === searchFields.zip)
+                // (!searchFields.highway || station.highway === searchFields.highway) &&
+                // (!searchFields.exitNo || station.exitNo === searchFields.exitNo)
+            );
+        });
+        debugger;
+        setFilteredDroneStations(filtered);
     };
     const handleBackToMonitoring = () => {
         setShowMissionPlanner(false);
@@ -181,7 +207,7 @@ const DroneMonitoring = () => {
             {/* Row 1: Search and Pie Chart */}
             <Grid item xs={12} container>
                 <Grid item xs={6}>
-                    <Search onSearch={handleSearch} cities={cities} drones={drones} states={states} zipCodes={zipCodes} />
+                    <Search onSearch={handleSearch} cities={cities} drones={drones} states={states} zipCodes={zipCodes} highways={highwaysWithExits} />
                 </Grid>
                 <Grid item xs={3}>
                     <Box
@@ -233,7 +259,7 @@ const DroneMonitoring = () => {
             <Grid item xs={12} container>
                 <Grid item xs={3}>
                     <Box sx={{ backgroundColor: '#120639', color: 'white', height: '45vh', overflowY: 'auto' }}>
-                        {droneStations.map((drone, index) => (
+                        {filteredDroneStations.map((drone, index) => (
                             <Card key={index} sx={{ backgroundColor: '#1a1a3d', marginBottom: '5px', color: 'white' }}>
                                 <CardContent>
                                     <Typography variant="body1">Drone Station: {drone.station_id}</Typography>
@@ -278,7 +304,7 @@ const DroneMonitoring = () => {
                     <MapContainer center={[37.7749, -122.4194]} zoom={13} style={{ height: '65vh', width: '100%' }} ref={mapRef} >
                         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                         <MapSearchControl />
-                        {droneStations.map((drone) => (
+                        {filteredDroneStations.map((drone) => (
                             <Marker
                                 key={drone.station_id}
                                 position={[drone.Latitude, drone.Longitude]}

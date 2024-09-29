@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Box, TextField, Button, Grid, Typography, MenuItem, Paper, List, ListItem } from '@mui/material';
 
-const Search = ({ states, cities, drones, zipCodes, highways, exits }) => {
+const Search = ({ onSearch, states, cities, drones, zipCodes, highways, exits }) => {
     const [searchFields, setSearchFields] = useState({
-        state: 'California', // Default State
+        state: '',
         city: '',
         droneId: '',
         zip: '',
@@ -36,6 +36,7 @@ const Search = ({ states, cities, drones, zipCodes, highways, exits }) => {
     const handleSearch = () => {
         // Perform search logic using searchFields
         console.log(searchFields);
+        onSearch(searchFields);
     };
 
     const inputStyle = {

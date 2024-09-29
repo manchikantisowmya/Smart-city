@@ -10,7 +10,7 @@ const IoTData = require('../models/iotData');
 const router = express.Router();
 const DroneStations_Y = require('../models/DroneStations_Y');
 const Highway = require('../models/highway');
-const Exit = require('../models/exit');
+const Exit = require('../models/exits');
 
 // Route to get roles from the database
 router.get('/fetchSignUpRoles', async (req, res) => {
@@ -267,6 +267,10 @@ router.get('/dronesStations', async (req, res) => {
           Location: 1,
           Inservice: 1,
           drone_id: 1,
+          Address:1,
+          City:1,
+          State:1,
+          ZipCode:1,
           "drone_info.name": 1,
           "drone_info.model": 1,
           "drone_info.manufacturer": 1,

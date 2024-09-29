@@ -29,8 +29,20 @@ const DroneStationSchema = new Schema({
     },
     drone_id: {
         type: String,
+    },
+    Address: {
+        type: String,
+    },
+    City: {
+        type: String,
+    },
+    State: {
+        type: String,
+    },
+    ZipCode: {
+        type: Number,
     }
-},{ collection: 'DroneStations_Y' });
+}, { collection: 'DroneStations_Y' });
 
 // Creating the model
 const DroneStations_Y = mongoose.model('DroneStations_Y', DroneStationSchema);

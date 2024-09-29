@@ -102,29 +102,29 @@ export default function IoTSection() {
             options={{
               maintainAspectRatio: false,
               plugins: {
-                datalabels:{
-                    display:true,
-                    color: '#fff',
-                    font: {
-                        size: 14,
-                        weight: 'bold',
-                      },
-                    formatter: (value) => {
-                        return `${value}`; 
-                    },
+                datalabels: {
+                  display: true,
+                  color: '#fff',
+                  font: {
+                    size: 14,
+                    weight: 'bold',
+                  },
+                  formatter: (value) => {
+                    return `${value}`;
+                  },
                 },
                 legend: {
-                    display: true,
-                    position: 'right',
-                    labels:{
-                        color:'white',
-                        font:{
-                          size:'14',
-                          weight:'bold'
-                        }
-                      } 
+                  display: true,
+                  position: 'right',
+                  labels: {
+                    color: 'white',
+                    font: {
+                      size: '14',
+                      weight: 'bold'
+                    }
+                  }
                 },
-            },
+              },
             }}
             height={150}
             width={150}
@@ -133,7 +133,7 @@ export default function IoTSection() {
         <Typography variant="h6" align="center" sx={{ py: 2 }}>
           IoT Devices
         </Typography>
-        <List sx={{ p: 0,height: '80vh', overflowY: 'auto' }}>
+        <List sx={{ p: 0, height: '80vh', overflowY: 'auto' }}>
           {iotData.map((device) => (
             <ListItem
               key={device._id}
@@ -141,9 +141,9 @@ export default function IoTSection() {
               sx={{
                 backgroundColor: selectedDevice && selectedDevice._id === device._id ? '#808080' : 'transparent',
                 '&:hover': { backgroundColor: '#383858' },
-                color: 'white', // Text color white
-                margin: 0, // Remove margin
-                padding: '8px 12px', // Adjust padding for compact view
+                color: 'white',
+                margin: 0,
+                padding: '8px 12px',
               }}
             >
               <ListItemText
@@ -178,22 +178,22 @@ export default function IoTSection() {
                 icon={createIoTIcon(device['Jam Factor'])}
                 eventHandlers={{
                   mouseover: (e) => {
-                    e.target.openPopup();  // Show popup on hover
+                    e.target.openPopup();
                   },
                   mouseout: (e) => {
-                    e.target.closePopup();  // Close popup when the mouse leaves
+                    e.target.closePopup();
                   },
                 }}
               >
                 <Popup>
                   <Typography variant="body1" gutterBottom>
-                    Device Information:
+                    IOT Information:
                   </Typography>
                   <Typography variant="caption">
                     Location: {device.Location} <br />
                     Jam Factor: {device['Jam Factor']} <br />
-                    Free Flow Speed: {device['Free Flow Speed (m/s)']}m/s <br />
-                    Current Speed: {device['Current Speed (m/s)']}m/s
+                    Free Flow Speed: {device['Free Flow Speed (m/s)']} mph <br />
+                    Current Speed: {device['Current Speed (m/s)']} mph
                   </Typography>
                 </Popup>
               </Marker>
@@ -202,7 +202,7 @@ export default function IoTSection() {
         )}
 
         {/* Device Details Section */}
-        {selectedDevice && (
+        {/* {selectedDevice && (
           <Box
             sx={{
               position: 'absolute',
@@ -222,7 +222,7 @@ export default function IoTSection() {
             <Typography>Latitude: {selectedDevice.Latitude}</Typography>
             <Typography>Longitude: {selectedDevice.Longitude}</Typography>
           </Box>
-        )}
+        )} */}
       </Box>
     </Box>
   );

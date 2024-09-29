@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Box, TextField, Button, Grid, Typography, MenuItem } from '@mui/material';
+import { Box, TextField, Button, Grid, Typography, MenuItem, Paper, List, ListItem } from '@mui/material';
 
-const Search = ({ cities, drones, highways, exits }) => {
+const Search = ({ states, cities, drones, zipCodes, highways, exits }) => {
     const [searchFields, setSearchFields] = useState({
         state: 'California', // Default State
         city: '',
@@ -37,6 +37,7 @@ const Search = ({ cities, drones, highways, exits }) => {
         // Perform search logic using searchFields
         console.log(searchFields);
     };
+
     const inputStyle = {
         height: '40px',
         padding: '0',
@@ -66,39 +67,60 @@ const Search = ({ cities, drones, highways, exits }) => {
             color: 'white', // Set dropdown arrow (icon) to white
         },
     };
+
     return (
-        <Box sx={{ backgroundColor: '#1a1a3d', color: 'white', borderRadius: '8px', height: '20vh' }}>
+        <Box sx={{ backgroundColor: '#1a1a3d', color: 'white', borderRadius: '8px', padding: '16px' }}>
             <Typography variant="h6">Search by Location</Typography>
             <Grid container spacing={2}>
                 {/* State Dropdown */}
                 <Grid item xs={12} md={3}>
                     <TextField
-                        fullWidth
-                        name="state"
-                        label="State"
-                        value={searchFields.state}
-                        onChange={handleInputChange}
-                        select
-                        sx={fieldStyle}
-                        InputProps={{ style: inputStyle }}
+                        fullWidth name="state" label="State" value={searchFields.state} onChange={handleInputChange} select
+                        sx={fieldStyle} InputProps={{ style: inputStyle }} SelectProps={{
+                            MenuProps: {
+                                PaperProps: {
+                                    style: {
+                                        maxHeight: 150,
+                                        backgroundColor: '#120639',
+                                        color: 'white',
+                                        overflow: 'auto',
+                                    },
+                                },
+                            },
+                        }}
                     >
-                        {/* Only one default option (California) */}
-                        <MenuItem value="California">California</MenuItem>
+                        {states && states.map((state) => (
+                            <MenuItem key={state} value={state}>
+                                {state}
+                            </MenuItem>
+                        ))}
                     </TextField>
                 </Grid>
 
-                {/* City Input with Dropdown */}
                 <Grid item xs={12} md={3}>
-                    <TextField
-                        fullWidth
-                        name="city"
-                        label="City"
-                        value={searchFields.city}
+                    <TextField fullWidth name="city" label="City" value={searchFields.city}
                         onChange={handleInputChange}
                         sx={fieldStyle}
-                        InputProps={{ style: inputStyle }}
-                    >
-                    </TextField>
+                        InputProps={{ style: inputStyle }} 
+                    />
+                    {filteredCities.length > 0 && (
+                        <Paper sx={{ maxHeight: 150, overflowY: 'auto', backgroundColor: '#120639', position: 'absolute', zIndex: 10, marginTop: '10px', }}>
+                            <List>
+                                {filteredCities.map((city) => (
+                                    <ListItem
+                                        key={city}
+                                        onClick={() => {
+                                            setSearchFields({ ...searchFields, city });
+                                            setFilteredCities([]); // Clear dropdown on select
+                                        }}
+                                        sx={{ color: 'white', '&:hover': { backgroundColor: '#383858' } }}
+                                    >
+                                        {city}
+                                    </ListItem>
+                                ))}
+                            </List>
+                        </Paper>
+                    )}
                 </Grid>
 
                 <Grid item xs={12} md={2}>
@@ -111,44 +133,60 @@ const Search = ({ cities, drones, highways, exits }) => {
             <Box sx={{ marginTop: '20px' }}>
                 <Typography variant="subtitle1">Advanced Search</Typography>
                 <Grid container spacing={2}>
+                    {/* Drone ID Dropdown */}
                     {drones && <Grid item xs={12} md={3}>
                         <TextField
-                            fullWidth name="droneId"   label="Drone ID" value={searchFields.droneId}  onChange={handleInputChange}
-                            sx={fieldStyle}    select
+                            fullWidth name="droneId" label="Drone ID" value={searchFields.droneId} onChange={handleInputChange}
+                            sx={fieldStyle} select
                             InputProps={{ style: inputStyle }}
                             SelectProps={{
                                 MenuProps: {
-                                  PaperProps: {
-                                    style: {
-                                      maxHeight: 150, 
-                                      backgroundColor: '#120639', 
-                                      color: 'white', 
-                                      overflow: 'auto', 
+                                    PaperProps: {
+                                        style: {
+                                            maxHeight: 150,
+                                            backgroundColor: '#120639',
+                                            color: 'white',
+                                            overflow: 'auto',
+                                        },
                                     },
-                                  },
                                 },
-                              }}
+                            }}
                         >
                             {drones.map((drone) => (
-                                <MenuItem key={drone.drone_id} value={drone.drone_id} sx={{backgroundColor: '#120639', color: 'white','&:hover': { backgroundColor: '#383858'},}}>
+                                <MenuItem key={drone.drone_id} value={drone.drone_id} sx={{ backgroundColor: '#120639', color: 'white', '&:hover': { backgroundColor: '#383858' }, }}>
                                     {drone.drone_id}
                                 </MenuItem>
                             ))}
                         </TextField>
                     </Grid>}
 
-                    <Grid item xs={12} md={3}>
-                        <TextField
-                            fullWidth
-                            name="zip"
-                            label="Zip"
-                            value={searchFields.zip}
-                            onChange={handleInputChange}
-                            sx={fieldStyle}
-                            InputProps={{ style: inputStyle }}
-                        />
-                    </Grid>
+                    {/* Zip Code Input */}
+                    {zipCodes && <Grid item xs={12} md={3}>
+                        <TextField fullWidth
+                            name="zip" label="Zip" value={searchFields.zip}
+                            onChange={handleInputChange} sx={fieldStyle} InputProps={{ style: inputStyle }}
+                            select SelectProps={{
+                                MenuProps: {
+                                    PaperProps: {
+                                        style: {
+                                            maxHeight: 150,
+                                            backgroundColor: '#120639',
+                                            color: 'white',
+                                            overflow: 'auto',
+                                        },
+                                    },
+                                },
+                            }}
+                        >
+                            {zipCodes.map((zip) => (
+                                <MenuItem key={zip} value={zip}>
+                                    {zip}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                    </Grid>}
 
+                    {/* Highway Input */}
                     {highways && <Grid item xs={12} md={3}>
                         <TextField
                             fullWidth
@@ -158,10 +196,18 @@ const Search = ({ cities, drones, highways, exits }) => {
                             onChange={handleInputChange}
                             sx={fieldStyle}
                             InputProps={{ style: inputStyle }}
-                        />
+                            select
+                        >
+                            {highways.map((highway) => (
+                                <MenuItem key={highway.highway_id} value={highway.highway_number}>
+                                    {highway.highway_number}
+                                </MenuItem>
+                            ))}
+                        </TextField>
                     </Grid>}
 
-                    {exits &&<Grid item xs={12} md={3}>
+
+                    {exits && <Grid item xs={12} md={3}>
                         <TextField
                             fullWidth
                             name="exitNo"
@@ -170,7 +216,14 @@ const Search = ({ cities, drones, highways, exits }) => {
                             onChange={handleInputChange}
                             sx={fieldStyle}
                             InputProps={{ style: inputStyle }}
-                        />
+                            select
+                        >
+                            {exits.map((exit) => (
+                                <MenuItem key={exit.exit_number} value={exit.exit_number}>
+                                    {exit.exit_number}
+                                </MenuItem>
+                            ))}
+                        </TextField>
                     </Grid>}
                 </Grid>
             </Box>

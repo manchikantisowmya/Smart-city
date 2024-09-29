@@ -45,4 +45,13 @@ export const getDroneStatistics = async () => {
   }
 };
 
+export const getHighwaysWithExits = async () => {
+  try {
+    // return true;
+    const response = await axios.get(`${BASE_URL}/highwaysWithExits`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message);
+  }
+};
 

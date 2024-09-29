@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { getDrones, getDroneStatistics, getDroneStations } from '../api/drone.js';
+import { getDrones, getDroneStatistics, getDroneStations, getHighwaysWithExits } from '../api/drone.js';
 import { Grid, Box, Typography, Button, Card, CardContent } from '@mui/material';
 import L from 'leaflet';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -14,7 +14,6 @@ import Search from './Search';
 
 Chart.register(ChartDataLabels);
 
-// Convert the MUI icon to HTML and then to a Leaflet icon
 const createDroneIcon = (status) => {
     let color;
 
@@ -34,33 +33,32 @@ const createDroneIcon = (status) => {
     }
 
     const droneIconSVG = (
-        <svg
-            width="80"
-            height="80"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            fill={color}
-        >
-            <path d="M22 11h-1l-1-2h-6.25L16 12.5h-2L10.75 9H4c-.55 0-2-.45-2-1s1.5-2.5 3.5-2.5S7.67 6.5 9 7h12a1 1 0 0 1 1 1zM10.75 6.5L14 3h2l-2.25 3.5zM18 11V9.5h1.75L19 11zM3 19a1 1 0 0 1-1-1a1 1 0 0 1 1-1a4 4 0 0 1 4 4a1 1 0 0 1-1 1a1 1 0 0 1-1-1a2 2 0 0 0-2-2m8 2a1 1 0 0 1-1 1a1 1 0 0 1-1-1a6 6 0 0 0-6-6a1 1 0 0 1-1-1a1 1 0 0 1 1-1a8 8 0 0 1 8 8" />
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={color}><title>quadcopter</title>
+            <path d="M5.5,1C8,1 10,3 10,5.5C10,6.38 9.75,7.2 9.31,7.9L9.41,8H14.59L14.69,7.9C14.25,7.2 14,6.38 14,5.5C14,3 16,1 18.5,1C21,1 23,3 23,5.5C23,8 21,10 18.5,10C17.62,10 16.8,9.75 16.1,9.31L15,10.41V13.59L16.1,14.69C16.8,14.25 17.62,14 18.5,14C21,14 23,16 23,18.5C23,21 21,23 18.5,23C16,23 14,21 14,18.5C14,17.62 14.25,16.8 14.69,16.1L14.59,16H9.41L9.31,16.1C9.75,16.8 10,17.62 10,18.5C10,21 8,23 5.5,23C3,23 1,21 1,18.5C1,16 3,14 5.5,14C6.38,14 7.2,14.25 7.9,14.69L9,13.59V10.41L7.9,9.31C7.2,9.75 6.38,10 5.5,10C3,10 1,8 1,5.5C1,3 3,1 5.5,1M5.5,3A2.5,2.5 0 0,0 3,5.5A2.5,2.5 0 0,0 5.5,8A2.5,2.5 0 0,0 8,5.5A2.5,2.5 0 0,0 5.5,3M5.5,16A2.5,2.5 0 0,0 3,18.5A2.5,2.5 0 0,0 5.5,21A2.5,2.5 0 0,0 8,18.5A2.5,2.5 0 0,0 5.5,16M18.5,3A2.5,2.5 0 0,0 16,5.5A2.5,2.5 0 0,0 18.5,8A2.5,2.5 0 0,0 21,5.5A2.5,2.5 0 0,0 18.5,3M18.5,16A2.5,2.5 0 0,0 16,18.5A2.5,2.5 0 0,0 18.5,21A2.5,2.5 0 0,0 21,18.5A2.5,2.5 0 0,0 18.5,16M3.91,17.25L5.04,17.91C5.17,17.81 5.33,17.75 5.5,17.75A0.75,0.75 0 0,1 6.25,18.5L6.24,18.6L7.37,19.25L7.09,19.75L5.96,19.09C5.83,19.19 5.67,19.25 5.5,19.25A0.75,0.75 0 0,1 4.75,18.5L4.76,18.4L3.63,17.75L3.91,17.25M3.63,6.25L4.76,5.6L4.75,5.5A0.75,0.75 0 0,1 5.5,4.75C5.67,4.75 5.83,4.81 5.96,4.91L7.09,4.25L7.37,4.75L6.24,5.4L6.25,5.5A0.75,0.75 0 0,1 5.5,6.25C5.33,6.25 5.17,6.19 5.04,6.09L3.91,6.75L3.63,6.25M16.91,4.25L18.04,4.91C18.17,4.81 18.33,4.75 18.5,4.75A0.75,0.75 0 0,1 19.25,5.5L19.24,5.6L20.37,6.25L20.09,6.75L18.96,6.09C18.83,6.19 18.67,6.25 18.5,6.25A0.75,0.75 0 0,1 17.75,5.5L17.76,5.4L16.63,4.75L16.91,4.25M16.63,19.25L17.75,18.5A0.75,0.75 0 0,1 18.5,17.75C18.67,17.75 18.83,17.81 18.96,17.91L20.09,17.25L20.37,17.75L19.25,18.5A0.75,0.75 0 0,1 18.5,19.25C18.33,19.25 18.17,19.19 18.04,19.09L16.91,19.75L16.63,19.25Z" />
         </svg>
     );
 
     const iconHTML = renderToStaticMarkup(droneIconSVG);
+
     return L.divIcon({
         html: iconHTML,
-        className: '',
+        className: 'custom-drone-icon',
         iconSize: [40, 40],
-        iconAnchor: [24, 24],
+        iconAnchor: [20, 20], // Adjusted anchor point for better positioning
     });
 };
+
 
 const DroneMonitoring = () => {
     const [droneStations, setDroneStations] = useState([]);
     const [drones, setDrones] = useState([]);
+    const [cities, setCities] = useState([]);
+    const [states, setStates] = useState([]);
+    const [zipCodes, setZipCodes] = useState([]);
     const [selectedDroneDetails, setSelectedDroneDetails] = useState(null);
     const [showMissionPlanner, setShowMissionPlanner] = useState(false);
     const [droneStatusData, setDroneStatusData] = useState(null);
-
+    const [highwaysWithExits, setHighwaysWithExits] = useState(null);
     const mapRef = useRef(null);
 
     useEffect(() => {
@@ -70,20 +68,44 @@ const DroneMonitoring = () => {
                 const distinctDrones = response.reduce((acc, station) => {
                     const existingDrone = acc.find(drone => drone.drone_id === station.drone_id);
                     if (!existingDrone) {
-                      acc.push({
-                        drone_id: station.drone_id,
-                        last_known_lat: station.Latitude,
-                        last_known_lon: station.Longitude,
-                        Location: station.Location,
-                        Inservice: station.Inservice
-                      });
+                        acc.push({
+                            drone_id: station.drone_id,
+                            last_known_lat: station.Latitude,
+                            last_known_lon: station.Longitude,
+                            Location: station.Location,
+                            Inservice: station.Inservice
+                        });
                     }
                     return acc;
-                  }, []);
-              
+                }, []);
+
+                const distinctCities = response.reduce((acc, station) => {
+                    if (!acc.includes(station.City.trim())) {
+                        acc.push(station.City.trim());
+                    }
+                    return acc;
+                }, []);
+
+                const distinctStates = response.reduce((acc, station) => {
+                    if (!acc.includes(station.State.trim())) {
+                        acc.push(station.State.trim());
+                    }
+                    return acc;
+                }, []);
+                const distinctZipCodes = response.reduce((acc, station) => {
+                    const zip = station.ZipCode?.toString();
+                    if (zip && !acc.includes(zip)) {
+                        acc.push(zip);
+                    }
+                    return acc;
+                }, []);
+
                 handleDroneClick(response[0]);
                 setDroneStations(response);
                 setDrones(distinctDrones);
+                setCities(distinctCities);
+                setStates(distinctStates);
+                setZipCodes(distinctZipCodes);
             } catch (error) {
                 console.error('Error fetching drone stations:', error);
             }
@@ -103,6 +125,19 @@ const DroneMonitoring = () => {
         };
 
         fetchDroneStatistics();
+    }, []);
+
+    useEffect(() => {
+        const fetchHighwaysWithExits = async () => {
+            try {
+                const response = await getHighwaysWithExits(); // Fetch data from the API
+                setHighwaysWithExits(response);
+            } catch (error) {
+                console.error('Error fetching dashboard data:', error);
+            }
+        };
+
+        fetchHighwaysWithExits();
     }, []);
 
     const pieData = droneStatusData
@@ -130,14 +165,12 @@ const DroneMonitoring = () => {
     const handleDroneClick = (drone) => {
         setSelectedDroneDetails(drone);
         if (mapRef.current) {
-            mapRef.current.setView([drone.Latitude, drone.Longitude], 15); // Zoom level 15 for better focus
+            mapRef.current.setView([drone.Latitude, drone.Longitude], 15);
         }
     };
-    const cities = ["San Francisco", "Los Angeles", "San Diego", "San Jose", "Sacramento"];
 
     const handleSearch = (searchData) => {
         console.log("Search Data:", searchData);
-        // Handle the search data (e.g., make an API request to filter the data)
     };
     const handleBackToMonitoring = () => {
         setShowMissionPlanner(false);
@@ -148,7 +181,7 @@ const DroneMonitoring = () => {
             {/* Row 1: Search and Pie Chart */}
             <Grid item xs={12} container>
                 <Grid item xs={6}>
-                    <Search onSearch={handleSearch} cities={cities} drones={drones} />
+                    <Search onSearch={handleSearch} cities={cities} drones={drones} states={states} zipCodes={zipCodes} />
                 </Grid>
                 <Grid item xs={3}>
                     <Box
@@ -233,7 +266,7 @@ const DroneMonitoring = () => {
                                     variant="contained"
                                     color="secondary"
                                     sx={{ marginTop: '10px' }}
-                                    onClick={() => setShowMissionPlanner(true)}  // Show the Mission Planner on click
+                                    onClick={() => setShowMissionPlanner(true)}
                                 >
                                     Check Missions
                                 </Button>
@@ -247,7 +280,7 @@ const DroneMonitoring = () => {
                         <MapSearchControl />
                         {droneStations.map((drone) => (
                             <Marker
-                                key={drone.drone_id}
+                                key={drone.station_id}
                                 position={[drone.Latitude, drone.Longitude]}
                                 icon={createDroneIcon(drone.drone_info.last_known_status)}
                             >

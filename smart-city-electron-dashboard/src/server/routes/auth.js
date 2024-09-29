@@ -196,4 +196,21 @@ router.get('/droneMissions/:drone_id',async(req,res)=>{
   }
 });
 
+router.get('/droneStatistics', async (req, res) => {
+  try {
+    const noOfDrones = await Drone.countDocuments(); // Count drones
+    const droneStatus = await Drone.aggregate([
+      { $group: { _id: '$last_known_status', count: { $sum: 1 } } } // Group by status (Active, Inactive, Charging)
+    ]);
+    // console.log(missionsPerDay);
+    res.json({
+      noOfDrones,
+      droneStatus
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error fetching  droneStatistics'});
+  }
+});
+
 module.exports = router;

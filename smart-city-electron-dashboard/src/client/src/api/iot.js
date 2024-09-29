@@ -11,7 +11,7 @@ export const getIotData = async () => {
     const response = await axios.get(`${BASE_URL}/iotData`);
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message);
+    throw new Error(error.respocdnse.data.message);
   }
 };
 

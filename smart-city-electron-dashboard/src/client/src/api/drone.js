@@ -25,3 +25,15 @@ export const getDroneMissions = async (drone_id) => {
     throw new Error(error.response.data.message);
   }
 };
+
+export const getDroneStatistics = async () => {
+  try {
+    // return true;
+    const response = await axios.get(`${BASE_URL}/droneStatistics`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message);
+  }
+};
+
+

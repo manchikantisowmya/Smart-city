@@ -20,7 +20,7 @@
   /* Unique background color for the rest of the application */
   .app-background {
     background-color: #120639; /* Choose your unique background color */
-    min-height: 250vh;
+    min-height: 100vh;
   }
   /* White borders between sections */
   

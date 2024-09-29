@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { getDrones, getDroneStatistics } from '../api/drone.js';
+import { getDrones, getDroneStatistics, getDroneStations } from '../api/drone.js';
 import { Grid, Box, Typography, Button, Card, CardContent } from '@mui/material';
 import L from 'leaflet';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -10,6 +10,7 @@ import { Pie } from 'react-chartjs-2';
 import MapSearchControl from '../Utilities/MapSearchControl';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Chart } from 'chart.js';
+import Search from './Search';
 
 Chart.register(ChartDataLabels);
 
@@ -54,6 +55,7 @@ const createDroneIcon = (status) => {
 };
 
 const DroneMonitoring = () => {
+    const [droneStations, setDroneStations] = useState([]);
     const [drones, setDrones] = useState([]);
     const [selectedDroneDetails, setSelectedDroneDetails] = useState(null);
     const [showMissionPlanner, setShowMissionPlanner] = useState(false);
@@ -62,17 +64,32 @@ const DroneMonitoring = () => {
     const mapRef = useRef(null);
 
     useEffect(() => {
-        const fetchDrones = async () => {
+        const fetchDroneStations = async () => {
             try {
-                const response = await getDrones();
+                const response = await getDroneStations();
+                const distinctDrones = response.reduce((acc, station) => {
+                    const existingDrone = acc.find(drone => drone.drone_id === station.drone_id);
+                    if (!existingDrone) {
+                      acc.push({
+                        drone_id: station.drone_id,
+                        last_known_lat: station.Latitude,
+                        last_known_lon: station.Longitude,
+                        Location: station.Location,
+                        Inservice: station.Inservice
+                      });
+                    }
+                    return acc;
+                  }, []);
+              
                 handleDroneClick(response[0]);
-                setDrones(response);
+                setDroneStations(response);
+                setDrones(distinctDrones);
             } catch (error) {
-                console.error('Error fetching drones:', error);
+                console.error('Error fetching drone stations:', error);
             }
         };
 
-        fetchDrones();
+        fetchDroneStations();
     }, []);
 
     useEffect(() => {
@@ -113,125 +130,136 @@ const DroneMonitoring = () => {
     const handleDroneClick = (drone) => {
         setSelectedDroneDetails(drone);
         if (mapRef.current) {
-            mapRef.current.setView([drone.last_known_lat, drone.last_known_lon], 15); // Zoom level 15 for better focus
+            mapRef.current.setView([drone.Latitude, drone.Longitude], 15); // Zoom level 15 for better focus
         }
     };
+    const cities = ["San Francisco", "Los Angeles", "San Diego", "San Jose", "Sacramento"];
 
+    const handleSearch = (searchData) => {
+        console.log("Search Data:", searchData);
+        // Handle the search data (e.g., make an API request to filter the data)
+    };
     const handleBackToMonitoring = () => {
         setShowMissionPlanner(false);
     };
 
     return !showMissionPlanner ? (
         <Grid container spacing={2}>
-            {/* Sidebar with Drone List */}
-            <Grid item xs={2}>
-            {droneStatusData && (
-                <Box
-                    sx={{
-                        bottom: '10px',
-                        left: '100px',
-                        height:'150px',
-                        backgroundColor: '#120639',
-                        borderRadius: '10px',
-                        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-                        zIndex: 1000,
-                    }} >
-                    <Pie
-                        data={pieData}
-                        options={{
-                            maintainAspectRatio: false,
-                            plugins: {
-                                datalabels:{
-                                    display:true,
-                                    color: '#fff',
-                                    font: {
-                                        size: 14,
-                                        weight: 'bold',
-                                      },
-                                    formatter: (value) => {
-                                        return `${value}`; 
+            {/* Row 1: Search and Pie Chart */}
+            <Grid item xs={12} container>
+                <Grid item xs={6}>
+                    <Search onSearch={handleSearch} cities={cities} drones={drones} />
+                </Grid>
+                <Grid item xs={3}>
+                    <Box
+                        sx={{
+                            marginTop: '0px',
+                            height: '200px',
+                            backgroundColor: '#120639',
+                            borderRadius: '10px',
+                            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                            zIndex: 1000,
+                        }} >
+                        <Pie
+                            data={pieData}
+                            options={{
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    datalabels: {
+                                        display: true,
+                                        color: '#fff',
+                                        font: {
+                                            size: 14,
+                                            weight: 'bold',
+                                        },
+                                        formatter: (value) => {
+                                            return `${value}`;
+                                        },
+                                    },
+                                    legend: {
+                                        display: true,
+                                        position: 'right',
+                                        labels: {
+                                            color: 'white',
+                                            font: {
+                                                size: '14',
+                                                weight: 'bold'
+                                            }
+                                        }
                                     },
                                 },
-                                legend: {
-                                    display: true,
-                                    position: 'right',
-                                    labels:{
-                                        color:'white',
-                                        font:{
-                                          size:'14',
-                                          weight:'bold'
-                                        }
-                                      } 
-                                },
-                            },
-                        }}
-                        height={100}
-                        width={100}
-                    />
-                </Box>
-                )}
-                <Box sx={{ backgroundColor: '#120639', color: 'white', height: '50vh', overflowY: 'auto' }}>
-                    {drones.map((drone, index) => (
-                        <Card key={index} sx={{ backgroundColor: '#1a1a3d', marginBottom: '5px', color: 'white' }}>
-                            <CardContent>
-                                <Typography variant="body1">Drone ID: {drone.drone_id}</Typography>
-                                <Typography variant="body2">Lat: {drone.last_known_lat}</Typography>
-                                <Typography variant="body2">Lng: {drone.last_known_lon}</Typography>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => handleDroneClick(drone)}
-                                    sx={{ marginTop: '10px' }}
-                                >
-                                    Details
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </Box>
-                <Box sx={{ backgroundColor: '#120639', color: 'white', height: '25vh', overflowY: 'auto' }}>
-                    {selectedDroneDetails && (
-                        <Box sx={{ marginTop: '20px' }}>
-                            <Typography variant="h6" gutterBottom>
-                                Drone Details
-                            </Typography>
-                            <Typography variant="body2">Drone ID: {selectedDroneDetails.drone_id}</Typography>
-                            <Typography variant="body2">
-                                Coordinates: {selectedDroneDetails.last_known_lat}, {selectedDroneDetails.last_known_lon}
-                            </Typography>
-                            <Button
-                                variant="contained"
-                                color="secondary"
-                                sx={{ marginTop: '10px' }}
-                                onClick={() => setShowMissionPlanner(true)}  // Show the Mission Planner on click
-                            >
-                                Check Missions
-                            </Button>
-                        </Box>
-                    )}
-                </Box>
+                            }}
+                            height={100}
+                            width={100}
+                        />
+                    </Box>
+                </Grid>
             </Grid>
 
-            {/* Map with Drones */}
-            <Grid item xs={10}>
-                <MapContainer center={[37.7749, -122.4194]} zoom={13} style={{ height: '85vh', width: '100%' }} ref={mapRef} >
-                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                    <MapSearchControl />
-                    {drones.map((drone) => (
-                        <Marker
-                            key={drone.drone_id}
-                            position={[drone.last_known_lat, drone.last_known_lon]}
-                            icon={createDroneIcon(drone.last_known_status)}
-                        >
-                            <Popup>
-                                <strong>{drone.name}</strong>
-                                <br />
-                                Status: {drone.last_known_status}
-                            </Popup>
-                        </Marker>
-                    ))}
-                </MapContainer>
-                
+            {/* Row 2: Drone Details Sidebar and Map */}
+            <Grid item xs={12} container>
+                <Grid item xs={3}>
+                    <Box sx={{ backgroundColor: '#120639', color: 'white', height: '45vh', overflowY: 'auto' }}>
+                        {droneStations.map((drone, index) => (
+                            <Card key={index} sx={{ backgroundColor: '#1a1a3d', marginBottom: '5px', color: 'white' }}>
+                                <CardContent>
+                                    <Typography variant="body1">Drone Station: {drone.station_id}</Typography>
+                                    <Typography variant="body2">Location: {drone.Location}</Typography>
+                                    <Typography variant="body2">Drone ID: {drone.drone_id}</Typography>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => handleDroneClick(drone)}
+                                        sx={{ marginTop: '10px' }}
+                                    >
+                                        Details
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </Box>
+                    <Box sx={{ backgroundColor: '#120639', color: 'white', height: '20vh', overflowY: 'auto' }}>
+                        {selectedDroneDetails && (
+                            <Box sx={{ marginTop: '20px' }}>
+                                <Typography variant="h6" gutterBottom>
+                                    Drone Details
+                                </Typography>
+                                <Typography variant="body2">Drone ID: {selectedDroneDetails.drone_id}</Typography>
+                                <Typography variant="body2">
+                                    Location: {selectedDroneDetails.Location}
+                                </Typography>
+                                <Typography variant="body2">Status: {selectedDroneDetails.drone_info.last_known_status}</Typography>
+                                <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    sx={{ marginTop: '10px' }}
+                                    onClick={() => setShowMissionPlanner(true)}  // Show the Mission Planner on click
+                                >
+                                    Check Missions
+                                </Button>
+                            </Box>
+                        )}
+                    </Box>
+                </Grid>
+                <Grid item xs={9}>
+                    <MapContainer center={[37.7749, -122.4194]} zoom={13} style={{ height: '65vh', width: '100%' }} ref={mapRef} >
+                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                        <MapSearchControl />
+                        {droneStations.map((drone) => (
+                            <Marker
+                                key={drone.drone_id}
+                                position={[drone.Latitude, drone.Longitude]}
+                                icon={createDroneIcon(drone.drone_info.last_known_status)}
+                            >
+                                <Popup>
+                                    <strong>{drone.drone_info.name}</strong>
+                                    <br />
+                                    Status: {drone.drone_info.last_known_status}
+                                </Popup>
+                            </Marker>
+                        ))}
+                    </MapContainer>
+                </Grid>
             </Grid>
         </Grid>
     ) : (

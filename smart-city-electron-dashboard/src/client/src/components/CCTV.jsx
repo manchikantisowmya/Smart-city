@@ -6,7 +6,7 @@ import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { getCameras, getCameraById } from '../api/cctv.js';
-
+import '../css/CCTVDashboard.css';
 // Define the CCTV icon
 const cctvIcon = L.icon({
   iconUrl: '/images/cctv.png',  
@@ -63,7 +63,7 @@ export default function CCTVDashboard() {
   // Handle marker click to open video modal with specific video
   const handleMarkerClick = (camera) => {
     if (camera.nearby_place === "Emeryville") {
-      setVideoSrc("/videos/Emryville.mov");
+      setVideoSrc("/videos/Emeryville.mov");
     } else if (camera.nearby_place === "San Francisco") {
       setVideoSrc("/videos/SanFrancisco.mp4");
     }

@@ -1,0 +1,19 @@
+
+  /* Unique background color for the rest of the application */
+  .app-background {
+    background-color: #120639; /* Choose your unique background color */
+    min-height: 250vh;
+  }
+  /* White borders between sections */
+  
+  .MuiDrawer-paper {
+    border-right: 2px solid white;
+  }
+  
+  .MuiAppBar-root {
+    border-bottom: 2px solid white;
+  }
+/*   
+  .MuiBox-root {
+    border-left: 2px solid white;
+  } */  

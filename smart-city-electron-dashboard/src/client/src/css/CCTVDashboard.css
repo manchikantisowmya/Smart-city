@@ -1,4 +1,22 @@
-
+/* Global Styles */
+.App {
+    min-height: 200vh;
+    display: flex;
+    flex-direction: column;
+    height: 200vh;
+  }
+  
+  /* Background image for login and signup screens */
+  .auth-background {
+    background-image: url('../Images/Traffic2.jpeg');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
   /* Unique background color for the rest of the application */
   .app-background {
     background-color: #120639; /* Choose your unique background color */
@@ -17,3 +35,17 @@
   .MuiBox-root {
     border-left: 2px solid white;
   } */  
+  .live-map-container {
+    background-color: #120639; /* Apply background color to the container */
+    padding: 16px; /* Add padding to create spacing inside the container */
+    border-radius: 8px; /* Optional: rounding corners for a smooth look */
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Add box shadow */
+    color: white;
+  }
+  
+  .live-map-iframe {
+    height: 600px;
+    width: 100%;
+    border: none;
+    background-color: #120639; /* Ensure the iframe background color matches */
+  }

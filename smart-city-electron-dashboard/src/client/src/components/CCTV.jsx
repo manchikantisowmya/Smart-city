@@ -178,8 +178,8 @@ export default function CCTVDashboard() {
         </Box>
       </Box>
 
-      {/* Caltrans Live Map */}
-      <Box
+{/* Caltrans Live Map */}
+<Box
         sx={{
           flexGrow: 1,
           minHeight: '600px', // Adding minHeight here
@@ -202,6 +202,7 @@ export default function CCTVDashboard() {
           title="Caltrans Live Traffic Map"
         />
       </Box>
+
 
       {/* Video Modal */}
       <Dialog open={openVideoModal} onClose={handleCloseVideoModal} maxWidth="md" fullWidth>

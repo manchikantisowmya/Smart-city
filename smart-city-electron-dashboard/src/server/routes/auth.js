@@ -6,8 +6,11 @@ const Role = require('../models/Role');
 const Drone = require('../models/Drone');
 const DroneMissions = require('../models/DroneMissions');
 const CaltransCamera = require('../models/CaltransCamera');
-const IoTData= require('../models/iotData');
+const IoTData = require('../models/iotData');
 const router = express.Router();
+const DroneStations_Y = require('../models/DroneStations_Y');
+const Highway = require('../models/highway');
+const Exit = require('../models/exits');
 
 // Route to get roles from the database
 router.get('/fetchSignUpRoles', async (req, res) => {
@@ -185,10 +188,10 @@ router.get('/iotData', async (req, res) => {
   }
 });
 
-router.get('/droneMissions/:drone_id',async(req,res)=>{
-  const {drone_id}=req.params;
+router.get('/droneMissions/:drone_id', async (req, res) => {
+  const { drone_id } = req.params;
   try {
-    const drones = await DroneMissions.find({drone_id});
+    const drones = await DroneMissions.find({ drone_id });
     res.json(drones);
   } catch (err) {
     console.error('Error fetching drones:', err);
@@ -209,8 +212,80 @@ router.get('/droneStatistics', async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error fetching  droneStatistics'});
+    res.status(500).json({ message: 'Server error fetching  droneStatistics' });
   }
 });
+
+router.get('/highwaysWithExits', async (req, res) => {
+  try {
+    const highwaysWithExits = await Highway.aggregate([
+      {
+        $lookup: {
+          from: "exits",
+          localField: "highway_id",
+          foreignField: "highway_id",
+          as: "exits"
+        }
+      },
+      {
+        $project: {
+          highway_number: 1,
+          start_location: 1,
+          end_location: 1,
+          available_lanes: 1,
+          exits: 1
+        }
+      }
+    ]);
+
+    res.json(highwaysWithExits);
+  } catch (err) {
+    console.error('Error fetching highways with exits:', err);
+    res.status(500).send('Server error');
+  }
+});
+
+router.get('/dronesStations', async (req, res) => {
+  try {
+    const drones = await DroneStations_Y.aggregate([
+      {
+        $lookup: {
+          from: "Drone",
+          localField: "drone_id",
+          foreignField: "drone_id",
+          as: "drone_info"
+        }
+      },
+      {
+        $unwind: "$drone_info"
+      },
+      {
+        $project: {
+          station_id: 1,
+          Latitude: 1,
+          Longitude: 1,
+          Location: 1,
+          Inservice: 1,
+          drone_id: 1,
+          Address:1,
+          City:1,
+          State:1,
+          ZipCode:1,
+          "drone_info.name": 1,
+          "drone_info.model": 1,
+          "drone_info.manufacturer": 1,
+          "drone_info.last_known_lat": 1,
+          "drone_info.last_known_lon": 1,
+          "drone_info.last_known_status": 1
+        }
+      }
+    ]);
+    res.json(drones);
+  } catch (err) {
+    console.error('Error fetching drones:', err);
+    res.status(500).send('Error fetching drones');
+  }
+});
+
 
 module.exports = router;

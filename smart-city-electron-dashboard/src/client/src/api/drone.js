@@ -55,3 +55,27 @@ export const getHighwaysWithExits = async () => {
   }
 };
 
+// Added By Yukta
+
+// Add Drone from DroneManagement
+export const addDrone = async (droneData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/drones`, droneData);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message);
+  }
+};
+
+// Delete Drone from DroneManagement
+
+export const deleteDrone = async (drone_id) => {
+  try {
+    console.log(drone_id);  // Ensure this logs correctly
+    const response = await axios.delete(`${BASE_URL}/drones/${drone_id}`);  // Pass the drone_id in the URL
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message);
+  }
+};
+// End

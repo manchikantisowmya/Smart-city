@@ -68,7 +68,7 @@ const DroneMonitoring = () => {
                 const response = await getDroneStations();
                 const distinctDrones = response.reduce((acc, station) => {
                     const existingDrone = acc.find(drone => drone.drone_id === station.drone_id);
-                    if (!existingDrone) {
+                    if (!existingDrone && station.Latitude && station.Longitude) {
                         acc.push({
                             drone_id: station.drone_id,
                             last_known_lat: station.Latitude,
@@ -195,7 +195,6 @@ const DroneMonitoring = () => {
                 // (!searchFields.exitNo || station.exitNo === searchFields.exitNo)
             );
         });
-        debugger;
         setFilteredDroneStations(filtered);
     };
     const handleBackToMonitoring = () => {

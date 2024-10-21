@@ -37,7 +37,6 @@ export const getDroneMissions = async (drone_id) => {
 
 export const getDroneStatistics = async () => {
   try {
-    // return true;
     const response = await axios.get(`${BASE_URL}/droneStatistics`);
     return response.data;
   } catch (error) {
@@ -54,4 +53,13 @@ export const getHighwaysWithExits = async () => {
     throw new Error(error.response.data.message);
   }
 };
+
+export const getAllDroneMissions = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/allDroneMissions`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message);
+  }
+}
 

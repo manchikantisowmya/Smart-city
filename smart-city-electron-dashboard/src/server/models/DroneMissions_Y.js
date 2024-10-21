@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { v4: uuidv4 } = require('uuid');
 
 const CoordsSchema = new mongoose.Schema({
   latitude: Number,
@@ -18,23 +19,26 @@ const GlobalDefaultSettingsSchema = new mongoose.Schema({
 });
 
 const droneMissionSchema = new mongoose.Schema({
-  _id: mongoose.Schema.Types.ObjectId,
+  _id: {
+    type: String,
+    default: uuidv4,
+  },
   drone_id: { type: String },
-  drone_station_id: { type: String},
-  mission_type: { type: String}, 
-  mission_locations: { type: String }, 
-  mission_distance: { type: Number, default: '' }, 
-  mission_waypoints: {type:[CoordsSchema], default:undefined},
-  mission_global_settings: {type:GlobalDefaultSettingsSchema, default:undefined},
-  mission_id: { type: String, unique: true }, 
-  mission_status: { type: String, enum: ['Pending', 'Ongoing', 'Completed'], default: 'Pending' }, // Status of the mission
+  drone_station_id: { type: String },
+  mission_type: { type: String },
+  mission_locations: { type: String },
+  mission_distance: { type: Number, default: '' },
+  mission_waypoints: { type: [CoordsSchema], default: undefined },
+  mission_global_settings: { type: GlobalDefaultSettingsSchema, default: undefined },
+  mission_id: { type: String, unique: true },
+  mission_status: { type: String }, // Status of the mission
   telemetry: { type: Array, default: [] }, // Telemetry data (Array)
   lineCords: { type: Array, default: [] }, // Line coordinates (Array)
-  user_id: { type: String }, 
+  user_id: { type: String },
   mission_description: { type: String, default: '' }, // Description of the mission
   mission_start_time: { type: Date },
-  mission_end_time: { type: Date }, 
-},{ collection: 'DroneMissions_Y' });
+  mission_end_time: { type: Date },
+}, { collection: 'DroneMissions_Y' });
 
 
 const DroneMissions_Y = mongoose.model('DroneMissions_Y', droneMissionSchema);

@@ -74,10 +74,10 @@ export default function Missions() {
 
     const handleModifyWaypoints = (missionData) => {
         setSelectedMission(missionData);
-        setShowWaypoints(true); 
+        setShowWaypoints(true);
     };
 
-    const showMissions =()=>{
+    const showMissions = () => {
         setShowWaypoints(false);
         setAction('view');
     }
@@ -96,7 +96,7 @@ export default function Missions() {
             const { lat, lng } = response.data.results[0].geometry;
             return { latitude: lat, longitude: lng };
         }
-        return null; 
+        return null;
     };
 
     useEffect(() => {
@@ -173,6 +173,11 @@ export default function Missions() {
         }
     };
 
+    const handleCreateMission = () => {
+        setAction('add');
+        setSelectedMission(null);
+    }
+
     return (
         <Box>
             {showWaypoints ? (
@@ -227,9 +232,11 @@ export default function Missions() {
                     </Box>
 
                     <Box sx={{ width: '30%', padding: '10px', color: '#fff', overflowY: 'auto', height: '85vh' }}>
+                        &nbsp;
+                        <Button variant="contained" color="secondary" onClick={handleCreateMission} sx={{ mb: 2 }} >Create Mission</Button>
                         <Typography variant="h5">Current Missions</Typography>
                         {missions.map((mission) => (
-                            
+
                             <Paper key={mission.mission_id} elevation={3} sx={{ padding: '10px', marginBottom: '10px', backgroundColor: '#6870fa', borderRadius: '8px' }}>
                                 <Box sx={{ display: 'flex' }}>
                                     <Button onClick={() => toggleMissionDetails(mission)} sx={{ width: '100%', textAlign: 'left', backgroundColor: 'transparent', border: 'none', padding: '0' }}>
@@ -318,8 +325,8 @@ export default function Missions() {
                     </Modal>
 
                     {/* Add/Edit Mission Modal */}
-                    {selectedMission && action === 'edit' && !confirmationModalOpen && (
-                        <AddEditMission mission={selectedMission} onClose={() => setSelectedMission(null)} onModifyWaypoints={handleModifyWaypoints} />
+                    {((selectedMission && action === 'edit') || action === 'add') && !confirmationModalOpen && (
+                        <AddEditMission mission={selectedMission} onClose={() => { setSelectedMission(null); setAction('view') }} onModifyWaypoints={handleModifyWaypoints} />
                     )}
                 </Box>
 

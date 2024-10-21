@@ -231,7 +231,7 @@
                     const response = await fetch(`${baseUrl}/getonemission1/${missionId}`);
                     const data = await response.json();
                     missionJSON = data;
-                    if (data.message === "Mission not found") {
+                    if (!data || data.message === "Mission not found") {
                         missionJSON = "{}";
                     }
                     // console.log("fetched mission " + missionId + " content " + missionJSON);

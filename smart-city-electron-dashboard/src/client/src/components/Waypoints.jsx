@@ -11,6 +11,7 @@ function Waypoints({ missionData,onBackToMission }) {
         id="myFrame"
         src={iframeSrc}
         height={920}
+        width="100%" 
         frameBorder="0"
         scrolling="no"
       ></iframe>

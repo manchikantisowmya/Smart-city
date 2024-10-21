@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, Typography, MenuItem, Modal, FormControl, InputLabel, Select } from '@mui/material';
 import { getDroneStations } from '../api/drone'; // Ensure you have an API to get available drones
+const { v4: uuidv4 } = require('uuid');
 
 const AddEditMission = ({ mission, onClose, onModifyWaypoints }) => {
     const [droneStations, setDroneStations] = useState([]);
 
     const [missionData, setMissionData] = useState({
+        _id: '',
         mission_id: '',
         mission_name: '',
         drone_station_id: '',
@@ -13,7 +15,7 @@ const AddEditMission = ({ mission, onClose, onModifyWaypoints }) => {
         mission_description: '',
         mission_start_time: '',
         mission_end_time: '',
-        userid:'',
+        user_id: '',
         mission_waypoints: []
     });
     const MISSION_TYPES = [
@@ -43,11 +45,24 @@ const AddEditMission = ({ mission, onClose, onModifyWaypoints }) => {
                 drone_station_id: mission.drone_station_id,
                 mission_start_time: mission.mission_start_time,
                 mission_end_time: mission.mission_end_time,
-                user_id:mission.user_id,
+                user_id: mission.user_id,
                 mission_waypoints: mission.mission_waypoints
             });
         }
-
+        else {
+            const userdetails = JSON.parse(window.localStorage.userData);
+            setMissionData({
+                _id: uuidv4(), mission_id: '',
+                mission_name: '',
+                drone_station_id: '',
+                mission_type: '',
+                mission_description: '',
+                mission_start_time: '',
+                mission_end_time: '',
+                user_id: userdetails.user.email,
+                mission_waypoints: []
+            });
+        }
 
         const fetchDroneStations = async () => {
             const stations = await getDroneStations();
@@ -63,15 +78,12 @@ const AddEditMission = ({ mission, onClose, onModifyWaypoints }) => {
     };
 
     const handleSubmit = () => {
-        // Handle submit logic here (e.g., API call to save changes)
-        console.log('Mission data submitted:', missionData);
-        // You can also call an API to update the mission details.
         onClose(); // Close the modal after submission
         onModifyWaypoints(missionData);
     };
 
     return (
-        <Modal open={Boolean(mission)} onClose={onClose}>
+        <Modal open={Boolean(missionData)} onClose={onClose}>
             <Box sx={{
                 position: 'absolute',
                 top: '50%',
@@ -85,25 +97,25 @@ const AddEditMission = ({ mission, onClose, onModifyWaypoints }) => {
                 borderRadius: 2,
             }}>
                 <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
-                    Modify Mission - {mission?.mission_id}
+                    {mission ? `Modify Mission - ${mission?.mission_id}` : 'Add Mission'}
                 </Typography>
                 <TextField
-                    fullWidth
+                    fullWidth name='id'
                     label="Mission ID"
                     value={missionData._id}
                     disabled
                     sx={{ mb: 2 }}
                 />
                 <TextField
-                    fullWidth
-                    label="Mission Name"
+                    fullWidth name='mission_id'
+                    label="Mission Name" onChange={handleInputChange}
                     value={missionData.mission_id}
-                    disabled
+                    disabled={!!mission}
                     sx={{ mb: 2 }}
                 />
                 <TextField multiline rows={3}
-                    fullWidth
-                    label="Mission Description"
+                    fullWidth name="mission_description"
+                    label="Mission Description" onChange={handleInputChange}
                     value={missionData.mission_description}
                     sx={{ mb: 2 }}
                 />
@@ -153,7 +165,7 @@ const AddEditMission = ({ mission, onClose, onModifyWaypoints }) => {
                     fullWidth
                     label="Start Date and Time (PST)"
                     type="datetime-local"
-                    name="start_time"
+                    name="mission_start_time"
                     value={missionData.mission_start_time?.substring(0, 16)}
                     onChange={handleInputChange}
                     sx={{ mb: 2 }} InputLabelProps={{ shrink: true }}
@@ -162,7 +174,7 @@ const AddEditMission = ({ mission, onClose, onModifyWaypoints }) => {
                     fullWidth
                     label="End Date and Time (PST)"
                     type="datetime-local"
-                    name="end_time"
+                    name="mission_end_time"
                     value={missionData.mission_end_time?.substring(0, 16)}
                     onChange={handleInputChange}
                     sx={{ mb: 2 }} InputLabelProps={{ shrink: true }}

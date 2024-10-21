@@ -301,7 +301,6 @@ router.get('/getonemission1/:mission_id', async (req, res) => {
 router.get('/allDroneMissions', async (req, res) => {
   try {
     const drones = await DroneMissions_Y.find({});
-    console.log(drones[0]);
     res.json(drones);
   } catch (err) {
     console.error('Error fetching all drone missions:', err);
@@ -312,35 +311,35 @@ router.get('/allDroneMissions', async (req, res) => {
 router.post('/addUpdateMission', async (req, res) => {
   try {
     const {
-        drone_id,
-        tenant_id,
-        // mission_id,
-        mission_distance,
-        mission_name,
-        items,
-        defaults,
-        service_type,
-        mission_description,
-        mission_start_time,
-        mission_end_time
+      drone_id,
+      tenant_id,
+      // mission_id,
+      mission_distance,
+      mission_name,
+      items,
+      defaults,
+      service_type,
+      mission_description,
+      mission_start_time,
+      mission_end_time
     } = req.body;
 
     let mission_id = req.body.mission_id; // Get mission_id from request body
     // console.log(mission_id);
 
     // If mission_id is not provided in the request body, generate a new one for creating a new mission
-   // if (!mission_id) {
-      let _id = uuidv4();
+    // if (!mission_id) {
+    let _id = uuidv4();
     //}
 
     // Map items to mission_waypoints format
     const mission_waypoints = items.map(item => ({
-        latitude: item.coordinates[0],
-        longitude: item.coordinates[1],
-        altitude: item.coordinates[2],
-        speed: item.speed || null,
-        camera_actions: item.cameraAction == 0 ? item.cameraAction :  item.cameraAction ? item.cameraAction :null,
-        delay: item.delay || null
+      latitude: item.coordinates[0],
+      longitude: item.coordinates[1],
+      altitude: item.coordinates[2],
+      speed: item.speed || null,
+      camera_actions: item.cameraAction == 0 ? item.cameraAction : item.cameraAction ? item.cameraAction : null,
+      delay: item.delay || null
     }));
 
     // Add defaults to mission_global_settings
@@ -353,17 +352,36 @@ router.post('/addUpdateMission', async (req, res) => {
     };
 
     // Check if mission with the given mission_id already exists
-  let existingMission = await DroneMissions_Y.findOne({ mission_id });
+    let existingMission = await DroneMissions_Y.findOne({ mission_id });
     console.log(existingMission);
-  // If mission exists, update it; otherwise, create a new mission
-  if (existingMission) {
-    // Update the existing mission
-    existingMission = await DroneMissions_Y.findOneAndUpdate(
-      { mission_id },
-      {
+    // If mission exists, update it; otherwise, create a new mission
+    if (existingMission) {
+      // Update the existing mission
+      existingMission = await DroneMissions_Y.findOneAndUpdate(
+        { mission_id },
+        {
+          drone_id,
+          mission_type: service_type,
+          mission_location: mission_name,
+          mission_waypoints,
+          mission_distance,
+          mission_global_settings: globalSettings,
+          user_id: tenant_id,
+          mission_description,
+          mission_start_time,
+          mission_end_time
+        },
+        { new: true } // Return the updated document
+      );
+    } else {
+      // Create a new mission instance
+      existingMission = new DroneMissions_Y({
+        _id,
         drone_id,
+        mission_id,
         mission_type: service_type,
         mission_location: mission_name,
+        mission_status: 'Planned', // Assuming mission status starts as pending
         mission_waypoints,
         mission_distance,
         mission_global_settings: globalSettings,
@@ -371,35 +389,16 @@ router.post('/addUpdateMission', async (req, res) => {
         mission_description,
         mission_start_time,
         mission_end_time
-      },
-      { new: true } // Return the updated document
-    );
-  } else {
-    // Create a new mission instance
-    existingMission = new DroneMissions_Y({
-      _id,
-      drone_id,
-      mission_id,
-      mission_type: service_type,
-      mission_location: mission_name,
-      mission_status: 'Planned', // Assuming mission status starts as pending
-      mission_waypoints,
-      mission_distance,
-      mission_global_settings: globalSettings,
-      user_id: tenant_id,
-      mission_description,
-      mission_start_time,
-      mission_end_time
-    });
-    // Save the new mission to the database
-    await existingMission.save();
-  }
+      });
+      // Save the new mission to the database
+      await existingMission.save();
+    }
 
-  res.status(201).json({ message: 'Mission created/updated successfully' });
-} catch (error) {
+    res.status(201).json({ message: 'Mission created/updated successfully' });
+  } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server Error' });
-}
+  }
 
 })
 module.exports = router;

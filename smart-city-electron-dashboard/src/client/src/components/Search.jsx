@@ -35,7 +35,6 @@ const Search = ({ onSearch, states, cities, drones, zipCodes, highways, exits })
     // Handle search button click
     const handleSearch = () => {
         // Perform search logic using searchFields
-        console.log(searchFields);
         onSearch(searchFields);
     };
 

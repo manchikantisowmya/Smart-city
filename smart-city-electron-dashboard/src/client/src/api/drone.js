@@ -37,7 +37,6 @@ export const getDroneMissions = async (drone_id) => {
 
 export const getDroneStatistics = async () => {
   try {
-    // return true;
     const response = await axios.get(`${BASE_URL}/droneStatistics`);
     return response.data;
   } catch (error) {
@@ -55,8 +54,6 @@ export const getHighwaysWithExits = async () => {
   }
 };
 
-// Added By Yukta
-
 // Add Drone from DroneManagement
 export const addDrone = async (droneData) => {
   try {
@@ -68,14 +65,21 @@ export const addDrone = async (droneData) => {
 };
 
 // Delete Drone from DroneManagement
-
 export const deleteDrone = async (drone_id) => {
   try {
-    console.log(drone_id);  // Ensure this logs correctly
-    const response = await axios.delete(`${BASE_URL}/drones/${drone_id}`);  // Pass the drone_id in the URL
+    console.log(drone_id); 
+    const response = await axios.delete(`${BASE_URL}/drones/${drone_id}`); 
     return response.data;
   } catch (error) {
     throw new Error(error.response.data.message);
   }
 };
-// End
+  
+export const getAllDroneMissions = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/allDroneMissions`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message);
+  }
+

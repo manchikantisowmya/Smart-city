@@ -8,10 +8,12 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.16",
     "@mui/material": "^5.14.16",
+    "@react-google-maps/api": "^2.20.3",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "bcryptjs": "^2.4.3",
+    "cesium": "^1.122.0",
     "chart.js": "^4.4.4",
     "chartjs-plugin-datalabels": "^2.2.0",
     "concurrently": "^8.2.2",
@@ -22,8 +24,8 @@
     "express": "^4.21.0",
     "jsonwebtoken": "^9.0.2",
     "leaflet": "^1.9.4",
-    "leaflet.gridlayer.googlemutant": "^0.14.1",
     "leaflet-control-geocoder": "^2.4.0",
+    "leaflet.gridlayer.googlemutant": "^0.14.1",
     "mongoose": "^8.6.3",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
@@ -61,5 +63,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "exports": {
+    "./*": "./*",
+    "./Build/*": "./Build/*"
   }
 }

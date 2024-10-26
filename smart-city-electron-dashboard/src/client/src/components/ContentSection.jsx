@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Dashboard from '../components/Dashboard'; 
 import IoTSection from '../components/IOT';
-import CCTVDashboard from '../components/CCTV';
+import CCTVDashboard from './CCTV';
 import Drone from '../components/Drone';
 
 const ContentSection = ({ selectedItem }) => {

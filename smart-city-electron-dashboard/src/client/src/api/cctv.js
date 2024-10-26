@@ -7,14 +7,12 @@ const BASE_URL = config[env].BASE_URL;
 
 export const getCameras = async () => {
   try {
-    // return true;
-    const response = await axios.get(`${BASE_URL}/cameras`);
+    const response = await axios.get(`${BASE_URL}/cameras`); // Correct API endpoint
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message);
+    throw new Error(error.response ? error.response.data.message : "Error fetching cameras");
   }
 };
-
 export const getCameraById = async (camera_id) => {
     try {
       // return true;
@@ -24,4 +22,3 @@ export const getCameraById = async (camera_id) => {
       throw new Error(error.response.data.message);
     }
   };
-

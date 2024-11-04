@@ -1,8 +1,17 @@
+// Modified by Yukta
+/*
+I changed the check mission button beside the detail button
+In the Pie chart drone station are shown instead of drones and also aligned the colors on the map with station instead of drone
+When click on Details it shows detail on Map itself
+
+Also how somehome I feel data in DroneMission is missing and incorrect the way points I beleive it would be good if we could use Drone_mission_y table"
+*/
+
 import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { getDrones, getDroneStatistics, getDroneStations, getHighwaysWithExits } from '../api/drone.js';
-import { Grid, Box, Typography, Button, Card, CardContent } from '@mui/material';
+//import { Grid, Box, Typography, Button, Card, CardContent } from '@mui/material';
 import L from 'leaflet';
 import { renderToStaticMarkup } from 'react-dom/server';
 import MissionPlanner from './MissionPlanner'; // Import Mission Planner
@@ -11,6 +20,7 @@ import MapSearchControl from '../Utilities/MapSearchControl';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Chart } from 'chart.js';
 import Search from './Search';
+import { Grid, Box, Typography, Button, Card, CardContent, Dialog, DialogTitle, DialogContent, DialogActions, containerClasses } from '@mui/material'; // Import Dialog components
 
 Chart.register(ChartDataLabels);
 
@@ -49,6 +59,7 @@ const createDroneIcon = (status) => {
 };
 
 
+
 const DroneMonitoring = () => {
     const [droneStations, setDroneStations] = useState([]);
     const [drones, setDrones] = useState([]);
@@ -59,16 +70,37 @@ const DroneMonitoring = () => {
     const [showMissionPlanner, setShowMissionPlanner] = useState(false);
     const [droneStatusData, setDroneStatusData] = useState(null);
     const [highwaysWithExits, setHighwaysWithExits] = useState(null);
-    const mapRef = useRef(null);
+    //const mapRef = useRef(null);
     const [filteredDroneStations, setFilteredDroneStations] = useState([]);
+    const [selectedDroneStation, setSelectedDroneStation] = useState(null);
+    const mapRef = useRef();
+    const markerRefs = useRef([]);  
+
+    //const [showDetailsPopup, setShowDetailsPopup] = useState(false); // New state for popup
+    const [showDetailsPopup, setShowDetailsPopup] = useState(false); // New state for popup
+
+    const handleClosePopup = () => {
+        setShowDetailsPopup(false); // Close the popup
+    };
+    useEffect(() => {
+        // Open the popup for the selected drone station
+        if (selectedDroneStation) {
+            const selectedRef = markerRefs.current[selectedDroneStation.station_id];
+            if (selectedRef) {
+                selectedRef.openPopup();
+            }
+        }
+    }, [selectedDroneStation]);
 
     useEffect(() => {
         const fetchDroneStations = async () => {
             try {
                 const response = await getDroneStations();
+                console.log(response)
+               // setDroneStatusData(response)
                 const distinctDrones = response.reduce((acc, station) => {
                     const existingDrone = acc.find(drone => drone.drone_id === station.drone_id);
-                    if (!existingDrone) {
+                    if (!existingDrone && station.Latitude && station.Longitude) {
                         acc.push({
                             drone_id: station.drone_id,
                             last_known_lat: station.Latitude,
@@ -101,13 +133,31 @@ const DroneMonitoring = () => {
                     return acc;
                 }, []);
 
-                handleDroneClick(response[0]);
+                //handleDroneClick(response[0]);
                 setDroneStations(response);
-                setFilteredDroneStations(response);
+               // setFilteredDroneStations(response);
                 setDrones(distinctDrones);
                 setCities(distinctCities);
                 setStates(distinctStates);
                 setZipCodes(distinctZipCodes);
+                setDroneStations(response);
+            setFilteredDroneStations(response);
+
+            // Status counting logic
+            const statusCounts = response.reduce((acc, station) => {
+                const status = station.Inservice; // Get the status of the station
+                acc[status] = (acc[status] || 0) + 1; // Increment the count for the status
+                return acc;
+            }, {});
+
+            const droneStatusArray = Object.entries(statusCounts).map(([status, count]) => ({
+                _id: status,
+                count: count,
+            }));
+
+            setDroneStatusData({ droneStatus: droneStatusArray }); // Update state with the new status data
+
+
             } catch (error) {
                 console.error('Error fetching drone stations:', error);
             }
@@ -120,7 +170,10 @@ const DroneMonitoring = () => {
         const fetchDroneStatistics = async () => {
             try {
                 const response = await getDroneStatistics(); // Fetch data from the API
-                setDroneStatusData(response);
+                console.log("Response From Drone")
+                console.log(response)
+
+                //setDroneStatusData(response);
             } catch (error) {
                 console.error('Error fetching dashboard data:', error);
             }
@@ -179,11 +232,24 @@ const DroneMonitoring = () => {
 
     const handleDroneClick = (drone) => {
         setSelectedDroneDetails(drone);
+       // setShowDetailsPopup(true); // Open popup on button click
+        setSelectedDroneStation(drone); // Set selected drone station
+        
+
+
         if (mapRef.current) {
             mapRef.current.setView([drone.Latitude, drone.Longitude], 15);
         }
+            // Open popup for the selected drone station
+        const markers = document.getElementsByClassName('leaflet-marker-icon');
+        Array.from(markers).forEach((marker) => {
+            marker.click();
+        });
     };
-
+    const handleCheckMissionsClick = (drone) => {
+        setSelectedDroneDetails(drone); // Set the drone details when "Check Missions" is clicked
+        setShowMissionPlanner(true);    // Open the mission planner
+    };
     const handleSearch = (searchFields) => {
         const filtered = droneStations.filter((station) => {
             return (
@@ -195,7 +261,6 @@ const DroneMonitoring = () => {
                 // (!searchFields.exitNo || station.exitNo === searchFields.exitNo)
             );
         });
-        debugger;
         setFilteredDroneStations(filtered);
     };
     const handleBackToMonitoring = () => {
@@ -258,7 +323,7 @@ const DroneMonitoring = () => {
             {/* Row 2: Drone Details Sidebar and Map */}
             <Grid item xs={12} container>
                 <Grid item xs={3}>
-                    <Box sx={{ backgroundColor: '#120639', color: 'white', height: '45vh', overflowY: 'auto' }}>
+                    <Box sx={{ backgroundColor: '#120639', color: 'white', height: '45vh', overflowY: 'auto',height: '65vh' }}>
                         {filteredDroneStations.map((drone, index) => (
                             <Card key={index} sx={{ backgroundColor: '#1a1a3d', marginBottom: '5px', color: 'white' }}>
                                 <CardContent>
@@ -273,11 +338,19 @@ const DroneMonitoring = () => {
                                     >
                                         Details
                                     </Button>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        sx={{ marginTop: '10px', marginLeft: '5px' }}
+                                        onClick={() => handleCheckMissionsClick(drone)} // Use new handler
+                                    >
+                                        CHECK MISSIONS
+                            </Button>
                                 </CardContent>
                             </Card>
                         ))}
                     </Box>
-                    <Box sx={{ backgroundColor: '#120639', color: 'white', height: '20vh', overflowY: 'auto' }}>
+                    {/* <Box sx={{ backgroundColor: '#120639', color: 'white', height: '20vh', overflowY: 'auto' }}>
                         {selectedDroneDetails && (
                             <Box sx={{ marginTop: '20px' }}>
                                 <Typography variant="h6" gutterBottom>
@@ -296,30 +369,71 @@ const DroneMonitoring = () => {
                                 >
                                     Check Missions
                                 </Button>
+                                
                             </Box>
                         )}
-                    </Box>
+                    </Box> */}
                 </Grid>
                 <Grid item xs={9}>
-                    <MapContainer center={[37.7749, -122.4194]} zoom={13} style={{ height: '65vh', width: '100%' }} ref={mapRef} >
+                    {/* <MapContainer center={[37.7749, -122.4194]} zoom={15} style={{ height: '65vh', width: '100%' }} ref={mapRef} >
                         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                         <MapSearchControl />
                         {filteredDroneStations.map((drone) => (
                             <Marker
                                 key={drone.station_id}
                                 position={[drone.Latitude, drone.Longitude]}
-                                icon={createDroneIcon(drone.drone_info.last_known_status)}
+                                icon={createDroneIcon(drone.Inservice)}
                             >
-                                <Popup>
-                                    <strong>{drone.drone_info.name}</strong>
-                                    <br />
-                                    Status: {drone.drone_info.last_known_status}
-                                </Popup>
+                                 <Popup>
+                                     Station ID:<strong>{drone.station_id}</strong> <br></br>
+                                     Address: <strong>{drone.Location}</strong><br></br>
+                                     Status: <strong>{drone.Inservice}</strong><br></br>
+                                     Drone Used: <strong>{drone.drone_info.name}</strong>
+                                     <br />
+                                 </Popup>
                             </Marker>
                         ))}
-                    </MapContainer>
+                    </MapContainer> */}
+              
+                     <MapContainer center={[37.7749, -122.4194]} zoom={15} style={{ height: '65vh', width: '100%' }} ref={mapRef} >
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <MapSearchControl />
+            {filteredDroneStations.map((drone, index) => {
+                return (
+                    <Marker
+                        key={drone.station_id}
+                        position={[drone.Latitude, drone.Longitude]}
+                        icon={createDroneIcon(drone.Inservice)}
+                        ref={(el) => (markerRefs.current[drone.station_id] = el)}  // Assign marker ref to the drone station ID
+                    >
+                        <Popup>
+                            Station ID: <strong>{drone.station_id}</strong> <br />
+                            Address: <strong>{drone.Location}</strong> <br />
+                            Status: <strong>{drone.Inservice}</strong> <br />
+                            Drone Used: <strong>{drone.drone_info.name}</strong> <br />
+                        </Popup>
+                    </Marker>
+                );
+            })}
+        </MapContainer>
                 </Grid>
             </Grid>
+             {/* Popup for Station Details
+          {selectedDroneDetails && (
+                  <Dialog open={showDetailsPopup} onClose={handleClosePopup}>
+                      <DialogTitle>Drone Station Details</DialogTitle>
+                      <DialogContent>
+                          <Typography>Station ID: {selectedDroneDetails.station_id}</Typography>
+                          <Typography>Location: {selectedDroneDetails.Location}</Typography>
+                          <Typography>Drone ID: {selectedDroneDetails.drone_id}</Typography>
+                          <Typography>Latitude: {selectedDroneDetails.Latitude}</Typography>
+                          <Typography>Longitude: {selectedDroneDetails.Longitude}</Typography>
+                      </DialogContent>
+                      <DialogActions>
+                          <Button onClick={handleClosePopup} color="primary">Close</Button>
+                     </DialogActions>
+                  </Dialog>
+             )} */}
         </Grid>
     ) : (
         <MissionPlanner droneId={selectedDroneDetails.drone_id} onBackToMonitoring={handleBackToMonitoring} />

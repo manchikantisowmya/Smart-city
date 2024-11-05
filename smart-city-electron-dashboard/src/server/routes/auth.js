@@ -169,6 +169,7 @@ router.get('/camerabyId/:camera_id', async (req, res) => {
   }
 });
 
+// Drones
 router.get('/drones', async (req, res) => {
   try {
     const drones = await Drone.find();
@@ -178,6 +179,37 @@ router.get('/drones', async (req, res) => {
     res.status(500).send('Error fetching drones');
   }
 });
+
+// Add Drones
+router.post('/drones', async (req, res) => {
+  const newDrone = req.body;  // Get the new drone data from the request body
+  console.log("newDrone")
+  try {
+    const savedDrone = await Drone.create(newDrone);  // Save it to the database
+    res.status(201).json(savedDrone);  // Send the saved drone as the response
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// Delete Drone on Drone ID
+router.delete('/drones/:drone_id', async (req, res) => {  // Add :drone_id to the route path
+  const droneId = req.params.drone_id;  // Get the drone_id from the route parameter
+  console.log("drones from auth.js")
+  console.log(droneId);
+  try {
+    const deletedDrone = await Drone.findOneAndDelete({ drone_id: droneId });  // Delete drone by drone_id
+    if (!deletedDrone) {
+      return res.status(404).json({ message: 'Drone not found' });
+    }
+    res.status(200).json({ message: 'Drone deleted successfully', drone: deletedDrone });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting drone', error });
+  }
+});
+
+// End
+
 
 router.get('/iotData', async (req, res) => {
   try {

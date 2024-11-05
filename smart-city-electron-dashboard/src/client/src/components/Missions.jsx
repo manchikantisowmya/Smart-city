@@ -108,7 +108,8 @@ export default function Missions() {
                 const statusCounts = { Completed: 0, Planned: 0, Failed: 0 };
                 response.forEach((mission) => {
                     try {
-                        uniqueLocations.push(mission.mission_location);
+                        if(mission.mission_location)
+                            uniqueLocations.push(mission.mission_location);
 
                         if (statusCounts[mission.mission_status] !== undefined) {
                             statusCounts[mission.mission_status] += 1;

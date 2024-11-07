@@ -269,10 +269,16 @@ export default function CCTVMonitoring() {
               }}
             >
               <Popup>
+<<<<<<< HEAD
                 <Typography variant="body1">Cam ID: {camera.camera_id}</Typography>
                 <Typography variant="body2">{camera.locationName}</Typography>
                 <Typography variant="body2">Nearby: {camera.nearbyPlace}</Typography>
                 <Typography variant="body2">Status: {camera.inService ? 'Active' : 'Inactive'}</Typography>
+=======
+                <Typography variant="body1">{camera.locationName}</Typography>
+                <Typography variant="body2">Nearby: {camera.nearbyPlace}</Typography>
+                <Typography variant="body2">Direction: {camera.direction}</Typography>
+>>>>>>> b2d5fbb (Connection changed to CCTV collections in backend)
               </Popup>
             </Marker>
           ))}

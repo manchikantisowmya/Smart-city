@@ -269,9 +269,10 @@ export default function CCTVMonitoring() {
               }}
             >
               <Popup>
-                <Typography variant="body1">{camera.locationName}</Typography>
+                <Typography variant="body1">Cam ID: {camera.camera_id}</Typography>
+                <Typography variant="body2">{camera.locationName}</Typography>
                 <Typography variant="body2">Nearby: {camera.nearbyPlace}</Typography>
-                <Typography variant="body2">Direction: {camera.direction}</Typography>
+                <Typography variant="body2">Status: {camera.inService ? 'Active' : 'Inactive'}</Typography>
               </Popup>
             </Marker>
           ))}

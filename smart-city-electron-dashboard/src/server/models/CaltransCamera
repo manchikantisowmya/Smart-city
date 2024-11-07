@@ -27,8 +27,8 @@ const cameraSchema = new mongoose.Schema({
   lng: {
     type: Number
   }
-}, { collection: 'CaltransCamera' }); // Specify the collection name
+}, { collection: 'CCTV' }); // Specify the collection name
 
-const CaltransCamera = mongoose.model('CaltransCamera', cameraSchema);
+const CCTV = mongoose.model('CCTV', cameraSchema);
 
-module.exports = CaltransCamera;
+module.exports = CCTV;

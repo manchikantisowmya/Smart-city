@@ -37,7 +37,7 @@ export default function CCTVMonitoring() {
         setCameras(cameraData);
         setFilteredCameras(cameraData);
 
-        setCities([...new Set(cameraData.map(camera => camera.nearby_place))]);
+        setCities([...new Set(cameraData.map(camera => camera.nearbyPlace))]);
         setStates([...new Set(cameraData.map(camera => camera.state))]);
         setRoutes([...new Set(cameraData.map(camera => camera.route))]);
         setZips([...new Set(cameraData.map(camera => camera.zip))]);
@@ -48,17 +48,14 @@ export default function CCTVMonitoring() {
     fetchCamerasData();
   }, []);
 
-  const getStatusIcon = (status) => {
+  const getStatusIcon = (inService) => {
     let color;
-    switch (status) {
-      case 'Active':
-        color = '#00FF00';
+    switch (inService) {
+      case true:
+        color = '#00FF00'; // Active
         break;
-      case 'Inactive':
-        color = '#FF0000';
-        break;
-      case 'Maintenance':
-        color = '#000000';
+      case false:
+        color = '#FF0000'; // Inactive
         break;
       default:
         color = '#CCCCCC';
@@ -77,7 +74,7 @@ export default function CCTVMonitoring() {
 
   const handleSearch = () => {
     const filtered = cameras.filter(camera =>
-      (city ? camera.nearby_place === city : true) &&
+      (city ? camera.nearbyPlace === city : true) &&
       (state ? camera.state === state : true) &&
       (route ? camera.route === route : true) &&
       (zip ? camera.zip === zip : true) &&
@@ -95,7 +92,7 @@ export default function CCTVMonitoring() {
       }
     }
   };
-  
+
   const handleViewOnMap = (camera) => {
     setSelectedCamera(camera);
     setMapCenter([camera.lat, camera.lng]);
@@ -113,9 +110,9 @@ export default function CCTVMonitoring() {
   };
 
   const handleMarkerClick = (camera) => {
-    if (camera.nearby_place === "Emeryville") {
+    if (camera.city === "Alameda") {
       setVideoSrc("/videos/Emeryville.mov");
-    } else if (camera.nearby_place === "San Francisco") {
+    } else if (camera.city === "San Francisco") {
       setVideoSrc("/videos/SanFrancisco.mp4");
     } else {
       setVideoSrc("");
@@ -212,22 +209,22 @@ export default function CCTVMonitoring() {
             </FormControl>
           </Grid>
           <Grid item xs={4}>
-            <Button 
-                onClick={handleSearch} 
-                variant="contained" 
-                color="primary" // Uses the theme's primary color
-                fullWidth 
-                sx={{
+            <Button
+              onClick={handleSearch}
+              variant="contained"
+              color="primary" // Uses the theme's primary color
+              fullWidth
+              sx={{
                 marginTop: 1,
                 color: '#fff',
                 ':hover': {
-                    backgroundColor: 'primary.dark', // Applies the primary dark color on hover
+                  backgroundColor: 'primary.dark', // Applies the primary dark color on hover
                 }
-                }}
+              }}
             >
-                Search
+              Search
             </Button>
-            </Grid>
+          </Grid>
         </Grid>
 
         <Box sx={{ backgroundColor: '#120639', color: 'white', height: '65vh', overflowY: 'auto', marginTop: 2 }}>
@@ -235,9 +232,10 @@ export default function CCTVMonitoring() {
             <Card key={index} sx={{ backgroundColor: '#1a1a3d', marginBottom: '5px', color: 'white' }}>
               <CardContent>
                 <Typography variant="body1">Camera ID: {camera.camera_id}</Typography>
-                <Typography variant="body2">Location: {camera.camera_name}</Typography>
-                <Typography variant="body2">Nearby: {camera.nearby_place}</Typography>
-                <Typography variant="body2">Status: {camera.status}</Typography>
+                <Typography variant="body2">City: {camera.city}</Typography>
+                <Typography variant="body2">Location: {camera.locationName}</Typography>
+                <Typography variant="body2">Nearby: {camera.nearbyPlace}</Typography>
+                <Typography variant="body2">Status: {camera.inService ? 'Active' : 'Inactive'}</Typography>
                 <Button
                   variant="contained"
                   color="primary"
@@ -257,7 +255,6 @@ export default function CCTVMonitoring() {
         <Box sx={{ position: 'absolute', top: 10, right: 10, backgroundColor: '#fff', padding: 1, borderRadius: 1, zIndex: 1000 }}>
           <Typography variant="body2"><span style={{ color: '#00FF00' }}>■</span> Active</Typography>
           <Typography variant="body2"><span style={{ color: '#FF0000' }}>■</span> Inactive</Typography>
-          <Typography variant="body2"><span style={{ color: '#000000' }}>■</span> Maintenance</Typography>
         </Box>
         <MapContainer center={mapCenter} zoom={zoom} style={{ height: '75vh', width: '100%' }} ref={mapRef}>
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
@@ -265,16 +262,17 @@ export default function CCTVMonitoring() {
             <Marker
               key={camera.camera_id}
               position={[camera.lat, camera.lng]}
-              icon={getStatusIcon(camera.status)}
+              icon={getStatusIcon(camera.inService)}
               ref={(el) => markerRefs.current[camera.camera_id] = el} // Store ref for each marker
               eventHandlers={{
                 click: () => handleMarkerClick(camera),
               }}
             >
               <Popup>
-                <Typography variant="body1">{camera.camera_name}</Typography>
-                <Typography variant="body2">Nearby: {camera.nearby_place}</Typography>
-                <Typography variant="body2">Status: {camera.status}</Typography>
+                <Typography variant="body1">Cam ID: {camera.camera_id}</Typography>
+                <Typography variant="body2">{camera.locationName}</Typography>
+                <Typography variant="body2">Nearby: {camera.nearbyPlace}</Typography>
+                <Typography variant="body2">Status: {camera.inService ? 'Active' : 'Inactive'}</Typography>
               </Popup>
             </Marker>
           ))}

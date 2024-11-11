@@ -145,7 +145,7 @@ router.get('/dashboard', async (req, res) => {
 // Route to get all cameras
 router.get('/cameras', async (req, res) => {
   try {
-    const cameras = await CaltransCamera.find();
+    const cameras = await CaltransCamera.find(); // Use the correct model name
     res.json(cameras);
   } catch (err) {
     console.error('Error fetching cameras:', err);
@@ -155,9 +155,10 @@ router.get('/cameras', async (req, res) => {
 
 // Route to get camera by ID
 router.get('/camerabyId/:camera_id', async (req, res) => {
-  const { camera_id } = req.params; // Get camera_id from the URL parameters
+  const { camera_id } = req.params;
+  console.log("Fetching camera with ID:", camera_id);  // Debugging statement
   try {
-    const camera = await CaltransCamera.findOne({ camera_id }); // Find the camera by its camera_id
+    const camera = await CaltransCamera.findOne({ camera_id });
     if (camera) {
       res.json(camera);
     } else {

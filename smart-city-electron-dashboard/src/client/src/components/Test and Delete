@@ -1,0 +1,83 @@
+<Grid container justifyContent="center">
+<Grid item xs={12}>
+        <Box sx={{ marginBottom: '20px' }}>
+            {/* Filter Input */}
+            {/* <TextField
+                label="Filter by Accident Type or Location"
+                variant="outlined"
+                fullWidth
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                sx={{
+                    backgroundColor: '#1a1a3d', 
+                    color: 'white', 
+                    marginBottom: '10px',
+                    '& .MuiInputBase-root': { color: 'white' },
+                    '& .MuiOutlinedInput-root': { 
+                        '& fieldset': { borderColor: 'white' },
+                        '&:hover fieldset': { borderColor: 'white' },
+                        '&.Mui-focused fieldset': { borderColor: 'white' },
+                    },
+                }}
+            /> */}
+
+            {/* Table */}
+            <TableContainer component={Paper} sx={{ backgroundColor: '#120639', color: 'white', overflowY: 'auto' }}>
+                <Table sx={{ backgroundColor: '#1a1a3d', color: 'white' }}>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell sx={{ color: 'white' }}>ID</TableCell>
+                            <TableCell sx={{ color: 'white' }}>Type</TableCell>
+                            <TableCell sx={{ color: 'white' }}>City</TableCell>
+                            <TableCell sx={{ color: 'white' }}>Date</TableCell>
+                            <TableCell sx={{ color: 'white' }}>Day</TableCell>
+                            <TableCell sx={{ color: 'white' }}>Location</TableCell>
+                            <TableCell sx={{ color: 'white' }}>Coordinates</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {filteredLocations.map((location) => (
+                            <TableRow key={location.id}>
+                                <TableCell sx={{ color: 'white' }}>{location.id}</TableCell>
+                                <TableCell sx={{ color: 'white' }}>{location.type}</TableCell>
+                                <TableCell sx={{ color: 'white' }}>{location.city}</TableCell>
+                                <TableCell sx={{ color: 'white' }}>{location.day}</TableCell>
+                                <TableCell sx={{ color: 'white' }}>{location.date}</TableCell>
+                                <TableCell sx={{ color: 'white' }}>{location.loc}</TableCell>
+                                <TableCell sx={{ color: 'white' }}>
+                                    ({location.lat.toFixed(4)}, {location.lon.toFixed(4)})
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </Box>
+    </Grid>
+
+
+<Grid item xs={12}>
+<MapContainer center={[37.8044, -122.2711]} zoom={12} style={{ height: '50vh', width: '100%' }}>
+<TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+{accidentLocations.map((location) => (
+    <Marker
+        key={location.id}
+        position={[location.lat, location.lon]}
+        icon={createIcon(location.type)}
+        eventHandlers={{ click: () => handleAlertClick(location) }}
+    >
+        <Popup>
+            <Typography variant="body1">{location.type}</Typography>
+            <Typography variant="body2">Location: ({location.lat.toFixed(4)}, {location.lon.toFixed(4)})</Typography>
+            <Typography variant="body2">Add: {location.loc}</Typography>
+            <Button 
+                variant="contained" 
+                color="primary" 
+                onClick={() => handleScheduleMission(location)}
+            >
+                Schedule a Mission
+            </Button>
+        </Popup>
+    </Marker>
+))}
+</MapContainer>

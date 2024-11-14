@@ -42,7 +42,6 @@ def fetch_mission_details_from_database(mission_id):
         return None
 
 mission_details = fetch_mission_details_from_database(mission_id)
-print(mission_details)
 drone_id = mission_details['drone_id']
 waypoints = mission_details["mission_waypoints"][0]
 # waypoints = json.loads(cleanedString);

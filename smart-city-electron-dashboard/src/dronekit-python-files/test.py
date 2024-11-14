@@ -3,7 +3,7 @@ import requests
 # Example: You need to implement this part based on your database setup
 def fetch_mission_details_from_database(mission_id):
     # Make a GET request to the API endpoint
-    url = "http://172.27.80.1:5001/api/getonemission1/{}".format(mission_id)
+    url = "http://172.27.80.1:5002/api/getonemission1/{}".format(mission_id)
     response = requests.get(url)
 
     # Check if the request was successful (status code 200)

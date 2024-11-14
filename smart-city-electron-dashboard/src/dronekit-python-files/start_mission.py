@@ -22,7 +22,7 @@ mission_id = args.mission_id
 
 # Go to command prompt on your windows machine and type 'ipconfig'
 # Copy the WSL IPv4 address and paste it below
-IP_ADDRESS = "192.168.0.95"
+IP_ADDRESS = "10.0.0.236"
 
 # Fetch mission details from the database based on the provided mission ID
 # Example: You need to implement this part based on your database setup
@@ -42,13 +42,14 @@ def fetch_mission_details_from_database(mission_id):
         return None
 
 mission_details = fetch_mission_details_from_database(mission_id)
-
+print(mission_details)
 drone_id = mission_details['drone_id']
-cleanedString = mission_details["mission_waypoints"][0].replace('\\"', '"');
+cleanedString = str(mission_details["mission_waypoints"][0]["latitude"]).replace('\\"', '"')
+print(cleanedString)
 waypoints = json.loads(cleanedString);
 print(waypoints)
-waypoint_0_lat = waypoints[0]['lat']
-waypoint_0_long =waypoints[0]['long']
+waypoint_0_lat = waypoints[0]['latitude']
+waypoint_0_long =waypoints[0]['longitude']
 
 # sitl = None
 # Constructing the home argument using the waypoint coordinates

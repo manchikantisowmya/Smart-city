@@ -1,5 +1,3 @@
-// Added by yukta from frontend.
-// " this is the testing change"
 const express = require('express');
 // const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -13,6 +11,7 @@ const router = express.Router();
 const DroneStations_Y = require('../models/DroneStations_Y');
 const Highway = require('../models/highway');
 const Exit = require('../models/exits');
+const { v4: uuidv4 } = require('uuid');
 
 // Route to get roles from the database
 router.get('/fetchSignUpRoles', async (req, res) => {
@@ -170,7 +169,6 @@ router.get('/camerabyId/:camera_id', async (req, res) => {
     res.status(500).send('Error fetching camera details');
   }
 });
-// Added by Yukta
 
 // Drones
 router.get('/drones', async (req, res) => {
@@ -241,7 +239,6 @@ router.get('/droneStatistics', async (req, res) => {
     const droneStatus = await Drone.aggregate([
       { $group: { _id: '$last_known_status', count: { $sum: 1 } } } // Group by status (Active, Inactive, Charging)
     ]);
-    // console.log(missionsPerDay);
     res.json({
       noOfDrones,
       droneStatus
@@ -303,10 +300,10 @@ router.get('/dronesStations', async (req, res) => {
           Location: 1,
           Inservice: 1,
           drone_id: 1,
-          Address:1,
-          City:1,
-          State:1,
-          ZipCode:1,
+          Address: 1,
+          City: 1,
+          State: 1,
+          ZipCode: 1,
           "drone_info.name": 1,
           "drone_info.model": 1,
           "drone_info.manufacturer": 1,
@@ -323,5 +320,118 @@ router.get('/dronesStations', async (req, res) => {
   }
 });
 
+router.get('/getonemission1/:mission_id', async (req, res) => {
+  const { mission_id } = req.params;
+  try {
+    const drone = await DroneMissions_Y.findOne({ mission_id });
+    res.json(drone);
+  } catch (err) {
+    console.error('Error fetching drones:', err);
+    res.status(500).send('Mission not found');
+  }
+});
 
+router.get('/allDroneMissions', async (req, res) => {
+  try {
+    const drones = await DroneMissions_Y.find({});
+    res.json(drones);
+  } catch (err) {
+    console.error('Error fetching all drone missions:', err);
+    res.status(500).send('Earror fetching all drone missions');
+  }
+});
+
+router.post('/addUpdateMission', async (req, res) => {
+  try {
+    const {
+      drone_id,
+      tenant_id,
+      // mission_id,
+      mission_distance,
+      mission_name,
+      items,
+      defaults,
+      service_type,
+      mission_description,
+      mission_start_time,
+      mission_end_time
+    } = req.body;
+
+    let mission_id = req.body.mission_id; // Get mission_id from request body
+    // console.log(mission_id);
+
+    // If mission_id is not provided in the request body, generate a new one for creating a new mission
+    // if (!mission_id) {
+    let _id = uuidv4();
+    //}
+
+    // Map items to mission_waypoints format
+    const mission_waypoints = items.map(item => ({
+      latitude: item.coordinates[0],
+      longitude: item.coordinates[1],
+      altitude: item.coordinates[2],
+      speed: item.speed || null,
+      camera_actions: item.cameraAction == 0 ? item.cameraAction : item.cameraAction ? item.cameraAction : null,
+      delay: item.delay || null
+    }));
+
+    // Add defaults to mission_global_settings
+    const globalSettings = {
+      aircraftType: defaults.aircraftType || null,
+      defaultTerrainAlt: defaults.defaultTerrainAlt || null,
+      defaultHeading: defaults.defaultHeading || null,
+      defaultSpeed: defaults.defaultSpeed || null,
+      defaultFrame: defaults.defaultFrame || null
+    };
+
+    // Check if mission with the given mission_id already exists
+    let existingMission = await DroneMissions_Y.findOne({ mission_id });
+    console.log(existingMission);
+    // If mission exists, update it; otherwise, create a new mission
+    if (existingMission) {
+      // Update the existing mission
+      existingMission = await DroneMissions_Y.findOneAndUpdate(
+        { mission_id },
+        {
+          drone_id,
+          mission_type: service_type,
+          mission_location: mission_name,
+          mission_waypoints,
+          mission_distance,
+          mission_global_settings: globalSettings,
+          user_id: tenant_id,
+          mission_description,
+          mission_start_time,
+          mission_end_time
+        },
+        { new: true } // Return the updated document
+      );
+    } else {
+      // Create a new mission instance
+      existingMission = new DroneMissions_Y({
+        _id,
+        drone_id,
+        mission_id,
+        mission_type: service_type,
+        mission_location: mission_name,
+        mission_status: 'Planned', // Assuming mission status starts as pending
+        mission_waypoints,
+        mission_distance,
+        mission_global_settings: globalSettings,
+        user_id: tenant_id,
+        mission_description,
+        mission_start_time,
+        mission_end_time
+      });
+      // Save the new mission to the database
+      await existingMission.save();
+    }
+
+    res.status(201).json({ message: 'Mission created/updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+
+})
 module.exports = router;

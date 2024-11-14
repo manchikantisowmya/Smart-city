@@ -15,6 +15,7 @@ import AutelRoboticsDragonfishImage from '../Images/dronecat/AutelRoboticsDragon
 import YuneecTyphoonHPlusImage from '../Images/dronecat/YuneecTyphoonHPlus.jpg';
 import { addDrone } from '../api/drone.js';
 
+
 const tabStyle = (isSelected) => ({
   backgroundColor: isSelected ? '#66bb6a' : '#120639', // Green when selected, dark when not
   color: '#fff',

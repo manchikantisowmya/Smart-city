@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Role = require('../models/Role');
 const Drone = require('../models/Drone');
-const DroneMissions = require('../models/DroneMissions');
+const DroneMissions_Y = require('../models/DroneMissions_Y');
 const CaltransCamera = require('../models/CaltransCamera');
 const IoTData = require('../models/iotData');
 const router = express.Router();
@@ -88,7 +88,7 @@ router.post('/login', async (req, res) => {
 router.get('/dashboard', async (req, res) => {
   try {
     const noOfDrones = await Drone.countDocuments(); // Count drones
-    const noOfMissions = await DroneMissions.countDocuments(); // Count missions
+    const noOfMissions = await DroneMissions_Y.countDocuments(); // Count missions
     const noOfUsers = await User.countDocuments(); // Count users
 
 
@@ -96,7 +96,7 @@ router.get('/dashboard', async (req, res) => {
       { $group: { _id: '$last_known_status', count: { $sum: 1 } } } // Group by status (Active, Inactive, Charging)
     ]);
 
-    const missionsPerDay = await DroneMissions.aggregate([
+    const missionsPerDay = await DroneMissions_Y.aggregate([
       {
         // Match documents where mission_start_time exists and is not an empty string
         $match: {
@@ -227,7 +227,7 @@ router.get('/iotData', async (req, res) => {
 router.get('/droneMissions/:drone_id', async (req, res) => {
   const { drone_id } = req.params;
   try {
-    const drones = await DroneMissions.find({ drone_id });
+    const drones = await DroneMissions_Y.find({ drone_id });
     res.json(drones);
   } catch (err) {
     console.error('Error fetching drones:', err);

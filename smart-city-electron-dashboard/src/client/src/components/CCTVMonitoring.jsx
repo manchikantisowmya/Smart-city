@@ -213,7 +213,7 @@ export default function CCTVMonitoring() {
           </Grid>
         </Grid>
 
-        <Typography variant="h6" sx={{ color: '#fff', marginBottom: 2 }}>Advanced Search</Typography>
+        <Typography variant="h7" sx={{ color: '#fff', marginBottom: 2 }}>Advanced Search</Typography>
 
         <Grid container spacing={2} sx={{ marginBottom: 2 }}>
           <Grid item xs={4}>

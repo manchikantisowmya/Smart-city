@@ -1,13 +1,13 @@
 {
-    "Congestion Severity": "High",
+    "Congestion Severity": "Medium",
     "Accident Detected": "True",
     "Accident Type": "Accident Type: collision",
     "Emergency Car On Site": "True",
-    "People On Road Count": "Total People On Road Count: 30",
-    "Total Vehicle Count": "Total Vehicle Noted: 137",
-    "Cars Count": "Total Cars Noted: 103",
+    "People On Road Count": "People On Road Count: 21",
+    "Total Vehicle Count": "Total Vehicle Count: 63",
+    "Cars Count": "Cars Count: 34",
     "Trucks Count": 0,
-    "Cyclists Count": "Cyclists Count: 10",
-    "Large Vehicle Count": "Large Vehicle Count: 24",
-    "Vehicles Invloved":4
+    "Cyclists Count": "Cyclists Count: 8",
+    "Large Vehicle Count": "Large Vehicle Count: 21",
+    "Vehicles Invloved" : 4
 }

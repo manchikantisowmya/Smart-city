@@ -1,0 +1,13 @@
+{
+    "Congestion Severity": "High",
+    "Accident Detected": "True",
+    "Accident Type": "Accident Type: truck_rollover",
+    "Emergency Car On Site": "True",
+    "People On Road Count": "People On Road Count: 17",
+    "Total Vehicle Count": "Total Vehicle Count: 175",
+    "Cars Count": "Cars Count: 112",
+    "Trucks Count": 0,
+    "Cyclists Count": "Cyclists Count: 9",
+    "Large Vehicle Count": "Large Vehicle Count: 54",
+    "Vehicles Invloved" : 3
+}

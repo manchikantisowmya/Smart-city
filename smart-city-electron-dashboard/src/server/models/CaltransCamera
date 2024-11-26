@@ -9,7 +9,7 @@ const cameraSchema = new mongoose.Schema({
   route: {
     type: String
   },
-  country: {
+  state: {
     type: String
   },
   nearby_place: {

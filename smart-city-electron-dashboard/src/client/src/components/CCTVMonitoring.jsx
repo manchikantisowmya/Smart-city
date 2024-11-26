@@ -20,8 +20,8 @@ export default function CCTVMonitoring() {
   const [routes, setRoutes] = useState([]);
   const [zips, setZips] = useState([]);
   const [filteredCameras, setFilteredCameras] = useState([]);
-  const [mapCenter, setMapCenter] = useState([37.7749, -122.4194]);
-  const [zoom, setZoom] = useState(12);
+  const [mapCenter, setMapCenter] = useState([38.256579, -122.076498]);
+  const [zoom, setZoom] = useState(14);
   const [selectedCamera, setSelectedCamera] = useState(null);
   const [openVideoModal, setOpenVideoModal] = useState(false);
   const [videoSrc, setVideoSrc] = useState('');
@@ -109,18 +109,28 @@ export default function CCTVMonitoring() {
     let color;
     switch (inService) {
       case true:
-        color = '#00FF00'; // Active
+        color = '#00FF00'; // Active (Green)
         break;
       case false:
-        color = '#FF0000'; // Inactive
+        color = '#000000'; // Inactive (Black)
+        break;
+      case 'Incident':
+        color = '#FF0000'; // Incident (Red)
         break;
       default:
-        color = '#CCCCCC';
+        color = '#CCCCCC'; // Default (Gray)
     }
-
+  
     return new L.divIcon({
       html: ReactDOMServer.renderToString(
-        <VideocamIcon style={{ fontSize: '24px', color: color }} />
+        <VideocamIcon
+          style={{
+            fontSize: '24px',
+            color: color,
+            stroke: 'black', // Black outline
+            strokeWidth: 1, // Thickness of the outline
+          }}
+        />
       ),
       className: '',
       iconSize: [24, 24],
@@ -128,6 +138,7 @@ export default function CCTVMonitoring() {
       popupAnchor: [0, -12],
     });
   };
+  
 
   const handleViewOnMap = (camera) => {
     setSelectedCamera(camera);
@@ -145,15 +156,23 @@ export default function CCTVMonitoring() {
   };
 
   const handleMarkerClick = (camera) => {
+    // Map specific cities and camera IDs to their respective videos
     if (camera.city === "Alameda") {
       setVideoSrc("/videos/Emeryville.mov");
     } else if (camera.city === "San Francisco") {
       setVideoSrc("/videos/SanFrancisco.mp4");
+    } else if (camera.city === "Solano" && camera.camera_id === "C018") {
+      setVideoSrc("/videos/Solano.mp4");
+    } else if (camera.city === "San Mateo" && camera.camera_id === "C014") {
+      setVideoSrc("/videos/SanMateo.mp4");
+    } else if (camera.city === "Contra Costa" && camera.camera_id === "C022") {
+      setVideoSrc("/videos/ContraCosta.mp4");
     } else {
-      setVideoSrc("");
+      setVideoSrc(""); // Default case, no video available
     }
     setOpenVideoModal(true);
   };
+  
 
   const handleCloseVideoModal = () => {
     setOpenVideoModal(false);
@@ -283,33 +302,101 @@ export default function CCTVMonitoring() {
         </Box>
       </Box>
 
-      <Box sx={{ width: '70%', position: 'relative' }}>
-        <Box sx={{ position: 'absolute', top: 10, right: 10, backgroundColor: '#fff', padding: 1, borderRadius: 1, zIndex: 1000 }}>
-          <Typography variant="body2"><span style={{ color: '#00FF00' }}>■</span> Active</Typography>
-          <Typography variant="body2"><span style={{ color: '#FF0000' }}>■</span> Inactive</Typography>
-        </Box>
-        <MapContainer center={mapCenter} zoom={zoom} style={{ height: '75vh', width: '100%' }} ref={mapRef}>
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          {filteredCameras.map((camera) => (
-            <Marker
-              key={camera.camera_id}
-              position={[camera.lat, camera.lng]}
-              icon={getStatusIcon(camera.inService)}
-              ref={(el) => markerRefs.current[camera.camera_id] = el}
-              eventHandlers={{
-                click: () => handleMarkerClick(camera),
-              }}
-            >
-              <Popup>
-                <Typography variant="body1">Cam ID: {camera.camera_id}</Typography>
-                <Typography variant="body2">{camera.locationName}</Typography>
-                <Typography variant="body2">Nearby: {camera.nearbyPlace}</Typography>
-                <Typography variant="body2">Status: {camera.inService ? 'Active' : 'Inactive'}</Typography>
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
-      </Box>
+      <Box sx={{ width: '70%', height: '65vh', position: 'relative', marginTop: '100px' }}>
+  {/* Wrapper for Legend and Map */}
+  <>
+    {/* Legend */}
+    <Box
+  sx={{
+    position: 'absolute',
+    top: -50, // Distance from the top
+    right: 10, // Distance from the right (outside map container)
+    zIndex: 1000, // Ensure it stays above other elements
+    backgroundColor: 'rgba(255, 255, 255, 0.95)', // Semi-transparent white
+    borderRadius: 12,
+    padding: '12px 16px',
+    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)', // Softer shadow
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 2,
+  }}
+>
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+    <Box
+      sx={{
+        width: 16,
+        height: 16,
+        backgroundColor: '#00FF00', // Green for Active
+        borderRadius: '50%',
+      }}
+    />
+    <Typography variant="body2" sx={{ color: '#000', fontWeight: 500 }}>
+      Active
+    </Typography>
+  </Box>
+
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+    <Box
+      sx={{
+        width: 16,
+        height: 16,
+        backgroundColor: '#FF0000', // Red for Incident
+        borderRadius: '50%',
+      }}
+    />
+    <Typography variant="body2" sx={{ color: '#000', fontWeight: 500 }}>
+      Incident
+    </Typography>
+  </Box>
+
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+    <Box
+      sx={{
+        width: 16,
+        height: 16,
+        backgroundColor: '#000000', // Black for Inactive
+        borderRadius: '50%',
+      }}
+    />
+    <Typography variant="body2" sx={{ color: '#000', fontWeight: 500 }}>
+      Inactive
+    </Typography>
+  </Box>
+</Box>
+
+
+    {/* Map */}
+    <MapContainer
+      center={mapCenter}
+      zoom={zoom}
+      style={{ height: '100%', width: '100%' }}
+      ref={mapRef}
+    >
+      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+      {filteredCameras.map((camera) => (
+        <Marker
+          key={camera.camera_id}
+          position={[camera.lat, camera.lng]}
+          icon={getStatusIcon(camera.inService)}
+          ref={(el) => (markerRefs.current[camera.camera_id] = el)}
+          eventHandlers={{
+            click: () => handleMarkerClick(camera),
+          }}
+        >
+          <Popup>
+            <Typography variant="body1">Cam ID: {camera.camera_id}</Typography>
+            <Typography variant="body2">{camera.locationName}</Typography>
+            <Typography variant="body2">Nearby: {camera.nearbyPlace}</Typography>
+            <Typography variant="body2">
+              Status: {camera.inService === true ? 'Active' : camera.inService === 'Incident' ? 'Incident' : 'Inactive'}
+            </Typography>
+          </Popup>
+        </Marker>
+      ))}
+    </MapContainer>
+  </>
+</Box>
 
       <Dialog open={openVideoModal} onClose={handleCloseVideoModal} maxWidth="md" fullWidth>
         <DialogTitle>
@@ -323,7 +410,7 @@ export default function CCTVMonitoring() {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <video width="100%" controls>
+          <video width="100%" controls autoPlay>
             {videoSrc && <source src={videoSrc} type="video/mp4" />}
             Your browser does not support the video tag.
           </video>

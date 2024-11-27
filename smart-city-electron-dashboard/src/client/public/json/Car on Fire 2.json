@@ -1,0 +1,13 @@
+{
+    "Congestion Severity": "Low",
+    "Accident Detected": "True",
+    "Accident Type": "Accident Type: car_on_fire",
+    "Emergency Car On Site": "True",
+    "People On Road Count": "People On Road Count: 9",
+    "Total Vehicle Count": "Total Vehicle Count: 36",
+    "Cars Count": "Cars Count: 23",
+    "Trucks Count": 0,
+    "Cyclists Count": "Cyclists Count: 8",
+    "Large Vehicle Count": "Large Vehicle Count: 5",
+    "Vehicles Invloved" : 1
+}

@@ -48,11 +48,12 @@ const fieldStyle = {
     },
 };
 const accidentLocations = [
-    { id: 1, type: 'Car on Fire', lat: 37.7749, lon: -122.4194, city: "San Francisco", day:"Monday",date:"11/18/2024", loc:'Hayes Valley, San Francisco, California, 94103, United States', video:'/videos/drones/Car on Fire 1.mp4', jsonData1:'/json/Car on Fire 1.json',provideo:'/videos/drones/Car on Fire 1 Pro.mp4' },
+    { id: 1, type: 'Car on Fire', lat: 37.5934, lon: -122.0439, city: "San Francisco", day:"Monday",date:"11/18/2024", loc:'Hayes Valley, San Francisco, California, 94103, United States', video:'/videos/drones/Car on Fire 1.mp4', jsonData1:'/json/Car on Fire 1.json',provideo:'/videos/drones/Car on Fire 1 Pro.mp4' },
     { id: 2, type: 'Car Collision', lat: 37.8044, lon: -122.2711, city: "Oakland", day:"Monday",date:"11/18/2024",loc: 'Broadway, Downtown, Downtown Oakland, Oakland, Alameda County, California, 94612, United States' ,video:'/videos/drones/Car Collision 1.mp4', jsonData1:'/json/Car Collision 1.json',provideo:'/videos/drones/Car Collision 1 Pro.mp4'},
     { id: 3, type: 'Truck Rollover', lat: 37.6879, lon: -122.4702,city: "Daly City", day:"Monday",date:"11/18/2024",loc:' Washington Street, Daly City, San Mateo County, California, 94014, United States',video:'/videos/drones/Truck Roll Over 1.mp4', jsonData1:'/json/Truck Roll Over 1.json',provideo:'/videos/drones/Truck Roll Over 1 Pro.mp4'},
     { id: 4, type: 'Car Collision', lat: 37.6808, lon: -122.3994,city: "Brisbane", day:"Monday",date:"11/18/2024",loc:' San Bruno Avenue,El Camino Real (CA-82), Brisbane, San Mateo County, California, 94066, United States',video:'/videos/drones/Car Collision 2.mp4', jsonData1:'/json/Car Collision 2.json', provideo:'/videos/drones/Car Collision 2 Pro.mp4'},
-
+    { id: 5, type: 'Car on Fire', lat: 	37.335480, lon: -121.893028, city: "San Jose", day:"Monday",date:"11/18/2024", loc:'Downtown San Jose, California, 95113, United States', video:'/videos/drones/Car on Fire 2.mp4', jsonData1:'/json/Car on Fire 2.json',provideo:'/videos/drones/Car on Fire 2 Pro.mp4' },
+    { id: 6, type: 'Truck Rollover', lat: 37.7749, lon: -122.4194, city: "San Jose", day:"Monday",date:"11/18/2024", loc:'Mission Peak Regional Preserve, San Jose, California, 94539, United States', video:'/videos/drones/Truck Roll Over 2.mp4', jsonData1:'/json/Truck Roll Over 2.json',provideo:'/videos/drones/Truck Roll Over 2 Pro.mp4' },
 ];
 
 const icons= {
@@ -621,6 +622,8 @@ const CarCrashIcon = () => (
                 border: '1px solid white', // Add a white border around each tab
                 borderTopWidth: '2px', // Set top border width to 2px
                 borderBottomWidth: '2px', // Set bottom border width to 2px
+                height: '10px', // Set the height of each tab (adjust as needed)
+
                 '&:hover': {
                     backgroundColor: 'rgba(255, 255, 255, 0.1)', // Optional hover effect
                 },
@@ -643,7 +646,7 @@ const CarCrashIcon = () => (
         }, [timer, dialogOpen]);
         
 return (
-      <Grid container spacing={2} style={{ height: '50vh' }}>
+      <Grid container spacing={2} style={{ height: '85vh', overflowY: 'auto' }}>
         {/* Dropdowns and Cards
         <Grid item xs={3}>
         <FormControl fullWidth margin="normal" sx={fieldStyle}>

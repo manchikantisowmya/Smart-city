@@ -211,6 +211,7 @@ export default function DroneManagement() {
         </Alert>
       </Snackbar>
       {selectedAction === 'view' && (
+         <div style={{ maxHeight: '75vh', overflow: 'auto' }}>
         <Table sx={{ border: '2px solid white' }} stickyHeader>
           <TableHead>
             <TableRow>
@@ -236,8 +237,11 @@ export default function DroneManagement() {
             ))}
           </TableBody>
         </Table>
+        </div>
       )}
+     
     </Box>
+
   );
 
   const renderMissionsSection = () => (

@@ -317,42 +317,92 @@ return (
     </Grid>
 
     <Grid item xs={12} container>
-      {/* Bottom Section with List and Map */}
-      <Grid item xs={3}>
-        <Box sx={{ backgroundColor: '#120639', color: 'white', height: '65vh', overflowY: 'auto' }}>
-          <List
-            sx={{
-              marginTop: '0px',
-              height: '200px',
-              backgroundColor: '#120639',
-              borderRadius: '10px',
-              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-              zIndex: 1000,
-            }}
-          >
-            {iotData.map((device) => (
-              <ListItem
-                key={device._id}
-                onClick={() => handleDeviceClick(device)}
-                sx={{
-                  backgroundColor: selectedDevice && selectedDevice._id === device._id ? '#808080' : 'transparent',
-                  '&:hover': { backgroundColor: '#383858' },
-                  color: 'white',
-                  margin: 0,
-                  padding: '8px 12px',
-                }}
-              >
-                <ListItemText
-                  primary={`IOT ${device.Location}`}
-                  secondary={`ID: ${device._id}`}
-                  sx={{ color: 'white', '& .MuiListItemText-secondary': { color: 'white' } }}
-                />
-              </ListItem>
-            ))}
-          </List>
+    <Grid item xs={3}>
+  <Box
+    sx={{
+      // backgroundColor: '#1a1a3d',
+      color: 'white',
+      height: '65vh',
+      overflowY: 'auto',
+      marginBottom: '5px',
+      padding: '16px', // Added padding for overall spacing
+    }}
+  >
+    <List
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px', // Space between list items
+      }}
+    >
+      {iotData.map((device) => (
+        <Box
+          key={device._id}
+          sx={{
+            backgroundColor: '#1a1a3d', // Slightly lighter background for cards
+            borderRadius: '8px', // Rounded corners
+            padding: '16px',
+            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.3)', // Shadow for a card-like effect
+          }}
+        >
+          <Typography variant="h7" sx={{ marginBottom: '8px' }}>
+          IOT Station: {device.Location}
+          </Typography>
+          <Typography variant="body2" sx={{ marginBottom: '16px' }}>
+            Device ID: {device._id}
+          </Typography>
         </Box>
-      </Grid>
+      ))}
+    </List>
+  </Box>
+</Grid>
 
+      {/* Bottom Section with List and Map
+      <Grid item xs={3}>
+  <Box
+    sx={{
+      backgroundColor: '#1a1a3d',
+      color: 'white',
+      height: '65vh',
+      overflowY: 'auto',
+      marginBottom: '5px',
+    }}
+  >
+    <List
+      sx={{
+        height: '200px',
+        backgroundColor: '#1a1a3d',
+        zIndex: 1000,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px', // Adds consistent spacing between items
+      }}
+    >
+      {iotData.map((device) => (
+        <ListItem
+          key={device._id}
+          onClick={() => handleDeviceClick(device)}
+          sx={{
+            backgroundColor: '#1a1a3d',
+            '&:hover': { backgroundColor: '#383858' },
+            color: 'white',
+            padding: '8px 12px',
+          }}
+        >
+          <ListItemText
+            primary={`IOT ${device.Location}`}
+            secondary={`ID: ${device._id}`}
+            sx={{
+              color: 'white',
+              backgroundColor: '#1a1a3d',
+              '& .MuiListItemText-secondary': { color: 'white' },
+            }}
+          />
+        </ListItem>
+      ))}
+    </List>
+  </Box>
+</Grid> */}
       <Grid item xs={9}>
         {/* Map 1*/}
         <MapContainer

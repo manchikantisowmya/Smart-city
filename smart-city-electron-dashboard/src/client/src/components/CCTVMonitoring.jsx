@@ -419,3 +419,4 @@ export default function CCTVMonitoring() {
       </Dialog>
     </Box>
   );
+}

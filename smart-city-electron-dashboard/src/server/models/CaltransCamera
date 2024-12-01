@@ -9,7 +9,10 @@ const cameraSchema = new mongoose.Schema({
   route: {
     type: String
   },
-  country: {
+  state: {
+    type: String
+  },
+  locationName: {
     type: String
   },
   nearby_place: {
@@ -18,13 +21,19 @@ const cameraSchema = new mongoose.Schema({
   camera_name: {
     type: String
   },
-  live_streaming_url: {
+  city: {
     type: String
   },
   lat: {
     type: Number
   },
   lng: {
+    type: Number
+  },
+  inService: {
+    type: Boolean
+  },
+  zip: {
     type: Number
   }
 }, { collection: 'CCTV' }); // Specify the collection name

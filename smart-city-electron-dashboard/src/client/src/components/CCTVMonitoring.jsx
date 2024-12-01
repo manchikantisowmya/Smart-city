@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Box, Typography, Button, FormControl, InputLabel, Select, MenuItem, Grid, Card, CardContent, Dialog, DialogTitle, DialogContent, IconButton } from '@mui/material';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import VideocamIcon from '@mui/icons-material/Videocam';
 import CloseIcon from '@mui/icons-material/Close';
 import 'leaflet/dist/leaflet.css';
 import { getCameras } from '../api/cctv';
 import L from 'leaflet';
 import ReactDOMServer from 'react-dom/server';
+import MapSearchControl from '../Utilities/MapSearchControl';
+import { getStatusIcon, handleCCTVMarkerClick } from '../Utilities/MapUtilities.js';
 
 export default function CCTVMonitoring() {
   const [city, setCity] = useState('');
@@ -48,30 +49,6 @@ export default function CCTVMonitoring() {
     fetchCamerasData();
   }, []);
 
-  const getStatusIcon = (inService) => {
-    let color;
-    switch (inService) {
-      case true:
-        color = '#00FF00'; // Active
-        break;
-      case false:
-        color = '#FF0000'; // Inactive
-        break;
-      default:
-        color = '#CCCCCC';
-    }
-
-    return new L.divIcon({
-      html: ReactDOMServer.renderToString(
-        <VideocamIcon style={{ fontSize: '24px', color: color }} />
-      ),
-      className: '',
-      iconSize: [24, 24],
-      iconAnchor: [12, 12],
-      popupAnchor: [0, -12],
-    });
-  };
-
   const handleSearch = () => {
     const filtered = cameras.filter(camera =>
       (city ? camera.nearbyPlace === city : true) &&
@@ -110,13 +87,7 @@ export default function CCTVMonitoring() {
   };
 
   const handleMarkerClick = (camera) => {
-    if (camera.city === "Alameda") {
-      setVideoSrc("/videos/Emeryville.mov");
-    } else if (camera.city === "San Francisco") {
-      setVideoSrc("/videos/SanFrancisco.mp4");
-    } else {
-      setVideoSrc("");
-    }
+    setVideoSrc(handleCCTVMarkerClick(camera));
     setOpenVideoModal(true);
   };
 
@@ -126,7 +97,7 @@ export default function CCTVMonitoring() {
   };
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh', flexDirection: 'row', padding: 2 }}>
+    <Box sx={{ display: 'flex', height: '90vh', flexDirection: 'row', padding: 2 }}>
       <Box sx={{ width: '30%', paddingRight: 2 }}>
         <Typography variant="h6" sx={{ color: '#fff', marginBottom: 2 }}>Search by Location</Typography>
 
@@ -256,8 +227,9 @@ export default function CCTVMonitoring() {
           <Typography variant="body2"><span style={{ color: '#00FF00' }}>■</span> Active</Typography>
           <Typography variant="body2"><span style={{ color: '#FF0000' }}>■</span> Inactive</Typography>
         </Box>
-        <MapContainer center={mapCenter} zoom={zoom} style={{ height: '75vh', width: '100%' }} ref={mapRef}>
+        <MapContainer center={mapCenter} zoom={zoom} style={{ height: '85vh', width: '100%' }} ref={mapRef}>
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <MapSearchControl />
           {filteredCameras.map((camera) => (
             <Marker
               key={camera.camera_id}

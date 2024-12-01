@@ -5,10 +5,18 @@ import config from '../../config.json'; // Import JSON config
 const env = process.env.NODE_ENV || 'development';
 const BASE_URL = config[env].BASE_URL;
 
-export const getDashboardData = async () => {
+export const getDashboardDroneInfo = async () => {
   try {
-    // return true;
-    const response = await axios.get(`${BASE_URL}/dashboard`);
+    const response = await axios.get(`${BASE_URL}/dashboardDroneInfo`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message);
+  }
+};
+
+export const getDashboardCCTVInfo = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/dashboardCCTVInfo`);
     return response.data;
   } catch (error) {
     throw new Error(error.response.data.message);

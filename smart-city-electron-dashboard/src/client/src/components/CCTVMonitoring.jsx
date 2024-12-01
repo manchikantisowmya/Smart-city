@@ -20,15 +20,51 @@ export default function CCTVMonitoring() {
   const [routes, setRoutes] = useState([]);
   const [zips, setZips] = useState([]);
   const [filteredCameras, setFilteredCameras] = useState([]);
-  const [mapCenter, setMapCenter] = useState([37.7749, -122.4194]);
-  const [zoom, setZoom] = useState(12);
+  const [mapCenter, setMapCenter] = useState([38.256579, -122.076498]);
+  const [zoom, setZoom] = useState(14);
   const [selectedCamera, setSelectedCamera] = useState(null);
-
   const [openVideoModal, setOpenVideoModal] = useState(false);
   const [videoSrc, setVideoSrc] = useState('');
-
   const mapRef = useRef();
-  const markerRefs = useRef({}); // Store references to each marker
+  const markerRefs = useRef({});
+
+  const inputStyle = {
+    height: '40px',
+    padding: '0',
+    color: 'white',
+    borderColor: 'white',
+    backgroundColor: '#120639', // Match background color
+  };
+  
+  const fieldStyle = {
+    '& .MuiInputBase-root': {
+      color: 'white',
+      backgroundColor: '#120639', // Match background color
+    },
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: 'white',
+      },
+      '&:hover fieldset': {
+        borderColor: 'white',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: 'white',
+      },
+      backgroundColor: '#120639', // Match background color for dropdown
+    },
+    '& .MuiInputLabel-root': {
+      color: 'white',
+    },
+    '& .MuiSelect-icon': {
+      color: 'white',
+    },
+    '& .MuiMenu-paper': {
+      backgroundColor: '#120639', // Background color of dropdown menu items
+      color: 'white',
+    },
+  };
+  
 
   useEffect(() => {
     const fetchCamerasData = async () => {
@@ -47,30 +83,6 @@ export default function CCTVMonitoring() {
     };
     fetchCamerasData();
   }, []);
-
-  const getStatusIcon = (inService) => {
-    let color;
-    switch (inService) {
-      case true:
-        color = '#00FF00'; // Active
-        break;
-      case false:
-        color = '#FF0000'; // Inactive
-        break;
-      default:
-        color = '#CCCCCC';
-    }
-
-    return new L.divIcon({
-      html: ReactDOMServer.renderToString(
-        <VideocamIcon style={{ fontSize: '24px', color: color }} />
-      ),
-      className: '',
-      iconSize: [24, 24],
-      iconAnchor: [12, 12],
-      popupAnchor: [0, -12],
-    });
-  };
 
   const handleSearch = () => {
     const filtered = cameras.filter(camera =>
@@ -93,6 +105,41 @@ export default function CCTVMonitoring() {
     }
   };
 
+  const getStatusIcon = (inService) => {
+    let color;
+    switch (inService) {
+      case true:
+        color = '#00FF00'; // Active (Green)
+        break;
+      case false:
+        color = '#000000'; // Inactive (Black)
+        break;
+      case 'Incident':
+        color = '#FF0000'; // Incident (Red)
+        break;
+      default:
+        color = '#CCCCCC'; // Default (Gray)
+    }
+  
+    return new L.divIcon({
+      html: ReactDOMServer.renderToString(
+        <VideocamIcon
+          style={{
+            fontSize: '24px',
+            color: color,
+            stroke: 'black', // Black outline
+            strokeWidth: 1, // Thickness of the outline
+          }}
+        />
+      ),
+      className: '',
+      iconSize: [24, 24],
+      iconAnchor: [12, 12],
+      popupAnchor: [0, -12],
+    });
+  };
+  
+
   const handleViewOnMap = (camera) => {
     setSelectedCamera(camera);
     setMapCenter([camera.lat, camera.lng]);
@@ -102,7 +149,6 @@ export default function CCTVMonitoring() {
       mapRef.current.setView([camera.lat, camera.lng], 18);
     }
 
-    // Open the popup for the selected camera
     const marker = markerRefs.current[camera.camera_id];
     if (marker) {
       marker.openPopup();
@@ -110,15 +156,23 @@ export default function CCTVMonitoring() {
   };
 
   const handleMarkerClick = (camera) => {
+    // Map specific cities and camera IDs to their respective videos
     if (camera.city === "Alameda") {
       setVideoSrc("/videos/Emeryville.mov");
     } else if (camera.city === "San Francisco") {
       setVideoSrc("/videos/SanFrancisco.mp4");
+    } else if (camera.city === "Solano" && camera.camera_id === "C018") {
+      setVideoSrc("/videos/Solano.mp4");
+    } else if (camera.city === "San Mateo" && camera.camera_id === "C014") {
+      setVideoSrc("/videos/SanMateo.mp4");
+    } else if (camera.city === "Contra Costa" && camera.camera_id === "C022") {
+      setVideoSrc("/videos/ContraCosta.mp4");
     } else {
-      setVideoSrc("");
+      setVideoSrc(""); // Default case, no video available
     }
     setOpenVideoModal(true);
   };
+  
 
   const handleCloseVideoModal = () => {
     setOpenVideoModal(false);
@@ -130,15 +184,14 @@ export default function CCTVMonitoring() {
       <Box sx={{ width: '30%', paddingRight: 2 }}>
         <Typography variant="h6" sx={{ color: '#fff', marginBottom: 2 }}>Search by Location</Typography>
 
-        {/* State, City, and Cam ID Row */}
         <Grid container spacing={2} sx={{ marginBottom: 2 }}>
           <Grid item xs={4}>
-            <FormControl fullWidth size="small">
+            <FormControl fullWidth size="small" sx={fieldStyle}>
               <InputLabel sx={{ color: '#fff' }}>State</InputLabel>
               <Select
                 value={state}
                 onChange={(e) => setState(e.target.value)}
-                sx={{ color: 'white', backgroundColor: '#121212' }}
+                sx={{ color: 'white', backgroundColor: '#121212', ...inputStyle }}
               >
                 {states.map((stateValue, index) => (
                   <MenuItem key={index} value={stateValue}>{stateValue}</MenuItem>
@@ -147,12 +200,12 @@ export default function CCTVMonitoring() {
             </FormControl>
           </Grid>
           <Grid item xs={4}>
-            <FormControl fullWidth size="small">
+            <FormControl fullWidth size="small" sx={fieldStyle}>
               <InputLabel sx={{ color: '#fff' }}>City</InputLabel>
               <Select
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
-                sx={{ color: 'white', backgroundColor: '#121212' }}
+                sx={{ color: 'white', backgroundColor: '#121212', ...inputStyle }}
               >
                 {cities.map((cityValue, index) => (
                   <MenuItem key={index} value={cityValue}>{cityValue}</MenuItem>
@@ -161,32 +214,34 @@ export default function CCTVMonitoring() {
             </FormControl>
           </Grid>
           <Grid item xs={4}>
-            <FormControl fullWidth size="small">
-              <InputLabel sx={{ color: '#fff' }}>Cam ID</InputLabel>
-              <Select
-                value={cameraId}
-                onChange={(e) => setCameraId(e.target.value)}
-                sx={{ color: 'white', backgroundColor: '#121212' }}
-              >
-                {cameras.map((camera) => (
-                  <MenuItem key={camera.camera_id} value={camera.camera_id}>{camera.camera_id}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <Button
+              onClick={handleSearch}
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{
+                marginTop: 1,
+                color: '#fff',
+                ':hover': {
+                  backgroundColor: 'primary.dark',
+                }
+              }}
+            >
+              Search
+            </Button>
           </Grid>
         </Grid>
 
-        <Typography variant="h6" sx={{ color: '#fff', marginBottom: 2 }}>Advanced Search</Typography>
+        <Typography variant="h7" sx={{ color: '#fff', marginBottom: 2 }}>Advanced Search</Typography>
 
-        {/* Zip Code, Highway, and Search Button Row */}
         <Grid container spacing={2} sx={{ marginBottom: 2 }}>
           <Grid item xs={4}>
-            <FormControl fullWidth size="small">
+            <FormControl fullWidth size="small" sx={fieldStyle}>
               <InputLabel sx={{ color: '#fff' }}>Zip Code</InputLabel>
               <Select
                 value={zip}
                 onChange={(e) => setZip(e.target.value)}
-                sx={{ color: 'white', backgroundColor: '#121212' }}
+                sx={{ color: 'white', backgroundColor: '#121212', ...inputStyle }}
               >
                 {zips.map((zipValue, index) => (
                   <MenuItem key={index} value={zipValue}>{zipValue}</MenuItem>
@@ -195,12 +250,12 @@ export default function CCTVMonitoring() {
             </FormControl>
           </Grid>
           <Grid item xs={4}>
-            <FormControl fullWidth size="small">
+            <FormControl fullWidth size="small" sx={fieldStyle}>
               <InputLabel sx={{ color: '#fff' }}>Highway</InputLabel>
               <Select
                 value={route}
                 onChange={(e) => setRoute(e.target.value)}
-                sx={{ color: 'white', backgroundColor: '#121212' }}
+                sx={{ color: 'white', backgroundColor: '#121212', ...inputStyle }}
               >
                 {routes.map((routeValue, index) => (
                   <MenuItem key={index} value={routeValue}>{routeValue}</MenuItem>
@@ -209,21 +264,18 @@ export default function CCTVMonitoring() {
             </FormControl>
           </Grid>
           <Grid item xs={4}>
-            <Button
-              onClick={handleSearch}
-              variant="contained"
-              color="primary" // Uses the theme's primary color
-              fullWidth
-              sx={{
-                marginTop: 1,
-                color: '#fff',
-                ':hover': {
-                  backgroundColor: 'primary.dark', // Applies the primary dark color on hover
-                }
-              }}
-            >
-              Search
-            </Button>
+            <FormControl fullWidth size="small" sx={fieldStyle}>
+              <InputLabel sx={{ color: '#fff' }}>Cam ID</InputLabel>
+              <Select
+                value={cameraId}
+                onChange={(e) => setCameraId(e.target.value)}
+                sx={{ color: 'white', backgroundColor: '#121212', ...inputStyle }}
+              >
+                {cameras.map((camera) => (
+                  <MenuItem key={camera.camera_id} value={camera.camera_id}>{camera.camera_id}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
         </Grid>
 
@@ -250,36 +302,102 @@ export default function CCTVMonitoring() {
         </Box>
       </Box>
 
-      {/* Map Section with Legend */}
-      <Box sx={{ width: '70%', position: 'relative' }}>
-        <Box sx={{ position: 'absolute', top: 10, right: 10, backgroundColor: '#fff', padding: 1, borderRadius: 1, zIndex: 1000 }}>
-          <Typography variant="body2"><span style={{ color: '#00FF00' }}>■</span> Active</Typography>
-          <Typography variant="body2"><span style={{ color: '#FF0000' }}>■</span> Inactive</Typography>
-        </Box>
-        <MapContainer center={mapCenter} zoom={zoom} style={{ height: '75vh', width: '100%' }} ref={mapRef}>
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          {filteredCameras.map((camera) => (
-            <Marker
-              key={camera.camera_id}
-              position={[camera.lat, camera.lng]}
-              icon={getStatusIcon(camera.inService)}
-              ref={(el) => markerRefs.current[camera.camera_id] = el} // Store ref for each marker
-              eventHandlers={{
-                click: () => handleMarkerClick(camera),
-              }}
-            >
-              <Popup>
-                <Typography variant="body1">Cam ID: {camera.camera_id}</Typography>
-                <Typography variant="body2">{camera.locationName}</Typography>
-                <Typography variant="body2">Nearby: {camera.nearbyPlace}</Typography>
-                <Typography variant="body2">Status: {camera.inService ? 'Active' : 'Inactive'}</Typography>
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
-      </Box>
+      <Box sx={{ width: '70%', height: '65vh', position: 'relative', marginTop: '100px' }}>
+  {/* Wrapper for Legend and Map */}
+  <>
+    {/* Legend */}
+    <Box
+  sx={{
+    position: 'absolute',
+    top: -50, // Distance from the top
+    right: 10, // Distance from the right (outside map container)
+    zIndex: 1000, // Ensure it stays above other elements
+    backgroundColor: 'rgba(255, 255, 255, 0.95)', // Semi-transparent white
+    borderRadius: 12,
+    padding: '12px 16px',
+    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)', // Softer shadow
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 2,
+  }}
+>
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+    <Box
+      sx={{
+        width: 16,
+        height: 16,
+        backgroundColor: '#00FF00', // Green for Active
+        borderRadius: '50%',
+      }}
+    />
+    <Typography variant="body2" sx={{ color: '#000', fontWeight: 500 }}>
+      Active
+    </Typography>
+  </Box>
 
-      {/* Video Modal */}
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+    <Box
+      sx={{
+        width: 16,
+        height: 16,
+        backgroundColor: '#FF0000', // Red for Incident
+        borderRadius: '50%',
+      }}
+    />
+    <Typography variant="body2" sx={{ color: '#000', fontWeight: 500 }}>
+      Incident
+    </Typography>
+  </Box>
+
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+    <Box
+      sx={{
+        width: 16,
+        height: 16,
+        backgroundColor: '#000000', // Black for Inactive
+        borderRadius: '50%',
+      }}
+    />
+    <Typography variant="body2" sx={{ color: '#000', fontWeight: 500 }}>
+      Inactive
+    </Typography>
+  </Box>
+</Box>
+
+
+    {/* Map */}
+    <MapContainer
+      center={mapCenter}
+      zoom={zoom}
+      style={{ height: '100%', width: '100%' }}
+      ref={mapRef}
+    >
+      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+      {filteredCameras.map((camera) => (
+        <Marker
+          key={camera.camera_id}
+          position={[camera.lat, camera.lng]}
+          icon={getStatusIcon(camera.inService)}
+          ref={(el) => (markerRefs.current[camera.camera_id] = el)}
+          eventHandlers={{
+            click: () => handleMarkerClick(camera),
+          }}
+        >
+          <Popup>
+            <Typography variant="body1">Cam ID: {camera.camera_id}</Typography>
+            <Typography variant="body2">{camera.locationName}</Typography>
+            <Typography variant="body2">Nearby: {camera.nearbyPlace}</Typography>
+            <Typography variant="body2">
+              Status: {camera.inService === true ? 'Active' : camera.inService === 'Incident' ? 'Incident' : 'Inactive'}
+            </Typography>
+          </Popup>
+        </Marker>
+      ))}
+    </MapContainer>
+  </>
+</Box>
+
       <Dialog open={openVideoModal} onClose={handleCloseVideoModal} maxWidth="md" fullWidth>
         <DialogTitle>
           Camera Video
@@ -292,7 +410,7 @@ export default function CCTVMonitoring() {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <video width="100%" controls>
+          <video width="100%" controls autoPlay>
             {videoSrc && <source src={videoSrc} type="video/mp4" />}
             Your browser does not support the video tag.
           </video>

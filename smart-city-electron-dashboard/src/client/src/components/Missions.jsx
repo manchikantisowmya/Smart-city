@@ -14,6 +14,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import AddEditMission from './AddEditMission';
 import Waypoints from './Waypoints.jsx';
+import { legend } from '../Utilities/MapUtilities.js';
 
 const getMissionColor = (missionStatus) => {
     let color;
@@ -61,7 +62,7 @@ const createWaypointIcon = (missionStatus) => {
     });
 };
 
-export default function Missions() {
+export default function Missions({ showCurrentMissions = true }) {
     const [missions, setMissions] = useState([]);
     const [missionStatusData, setMissionStatusData] = useState({});
     const [locations, setLocations] = useState({});
@@ -108,7 +109,7 @@ export default function Missions() {
                 const statusCounts = { Completed: 0, Planned: 0, Failed: 0 };
                 response.forEach((mission) => {
                     try {
-                        if(mission.mission_location)
+                        if (mission.mission_location)
                             uniqueLocations.push(mission.mission_location);
 
                         if (statusCounts[mission.mission_status] !== undefined) {
@@ -146,15 +147,15 @@ export default function Missions() {
         setConfirmationModalOpen(true);
     };
 
-    const pieData = {
-        labels: ['Completed', 'Planned', 'Failed'],
-        datasets: [
-            {
-                data: [missionStatusData.Completed, missionStatusData.Planned, missionStatusData.Failed],
-                backgroundColor: ['#f44336', '#4caf50', '#ff9800'],
-            },
-        ],
-    };
+    // const pieData = {
+    //     labels: ['Completed', 'Planned', 'Failed'],
+    //     datasets: [
+    //         {
+    //             data: [missionStatusData.Completed, missionStatusData.Planned, missionStatusData.Failed],
+    //             backgroundColor: ['#f44336', '#4caf50', '#ff9800'],
+    //         },
+    //     ],
+    // };
     const confirmDelete = async () => {
         try {
             await axios.delete(`${config[process.env.NODE_ENV].BASE_URL}/mission/${selectedMission.mission_id}`);
@@ -186,22 +187,8 @@ export default function Missions() {
             ) : (
                 <Box sx={{ display: 'flex', height: '80vh' }}>
                     {/* Left Section for Map and Search */}
-                    <Box sx={{ flex: 2, padding: 2, color: "#fff" }}>
-                        {/* <Typography variant="h4" sx={{ mb: 2 }}>Mission Map</Typography> */}
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <div style={{ backgroundColor: '#ff9800', width: '15px', height: '15px', marginRight: '5px' }}></div>
-                                <Typography variant="h5">Planned</Typography>
-                            </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <div style={{ backgroundColor: '#4caf50', width: '15px', height: '15px', marginRight: '5px' }}></div>
-                                <Typography variant="h5">Completed</Typography>
-                            </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <div style={{ backgroundColor: '#f44336', width: '15px', height: '15px', marginRight: '5px' }}></div>
-                                <Typography variant="h5">Failed</Typography>
-                            </Box>
-                        </Box>
+                    <Box sx={{ flex: 2, padding: 0, color: "#fff" }}>
+                        {showCurrentMissions && legend()}
                         <MapContainer center={[37.7749, -122.4194]} zoom={13} style={{ height: '80vh' }}>
                             <TileLayer
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -215,13 +202,13 @@ export default function Missions() {
                                         <Marker
                                             key={mission.mission_id}
                                             position={[locationCoords.latitude, locationCoords.longitude]}
-                                            icon={createWaypointIcon(mission.mission_status)}
-
-                                        >
+                                            icon={createWaypointIcon(mission.mission_status)} >
                                             <Popup>
                                                 <div>
-                                                    <h3>{mission.mission_}</h3>
+                                                    <h3>{mission.mission_id}</h3>
                                                     <p>Status: {mission.mission_status}</p>
+                                                    <p>{mission.mission_type}</p>
+                                                    <p>{mission.drone_station_id}</p>
                                                 </div>
                                             </Popup>
                                         </Marker>
@@ -231,76 +218,77 @@ export default function Missions() {
                         </MapContainer>
 
                     </Box>
+                    {showCurrentMissions ? (
+                        <Box sx={{ width: '30%', padding: '10px', color: '#fff', overflowY: 'auto', height: '85vh' }}>
+                            &nbsp;
+                            <Button variant="contained" color="secondary" onClick={handleCreateMission} sx={{ mb: 2 }} >Create Mission</Button>
+                            <Typography variant="h5">Current Missions</Typography>
+                            {missions.map((mission) => (
 
-                    <Box sx={{ width: '30%', padding: '10px', color: '#fff', overflowY: 'auto', height: '85vh' }}>
-                        &nbsp;
-                        <Button variant="contained" color="secondary" onClick={handleCreateMission} sx={{ mb: 2 }} >Create Mission</Button>
-                        <Typography variant="h5">Current Missions</Typography>
-                        {missions.map((mission) => (
-
-                            <Paper key={mission.mission_id} elevation={3} sx={{ padding: '10px', marginBottom: '10px', backgroundColor: '#6870fa', borderRadius: '8px' }}>
-                                <Box sx={{ display: 'flex' }}>
-                                    <Button onClick={() => toggleMissionDetails(mission)} sx={{ width: '100%', textAlign: 'left', backgroundColor: 'transparent', border: 'none', padding: '0' }}>
-                                        <Typography variant="body1" sx={{ color: '#fff' }}>
-                                            Mission ID # {mission.mission_id} &nbsp;
-                                            <span
-                                                style={{
-                                                    fontWeight: 'bold',
-                                                    backgroundColor: getMissionColor(mission.mission_status),
-                                                    color: '#fff',
-                                                    padding: '4px 8px',
-                                                    borderRadius: '10px',
-                                                    display: 'inline-block',
-                                                }}
-                                            >
-                                                {mission.mission_status}
-                                            </span>
-                                        </Typography>
-                                    </Button>
-                                    <Button onClick={() => handleEdit(mission)} sx={{ color: '#fff' }}><EditIcon /></Button>
-                                    <Button onClick={() => handleDelete(mission)} sx={{ color: '#fff' }}><DeleteIcon /></Button>
-                                    <Button onClick={() => toggleMissionDetails(mission)} sx={{ color: '#fff' }}>
-                                        {missionDetails?.mission_id === mission.mission_id ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                                    </Button>
-                                </Box>
-                                {missionDetailsVisible === mission.mission_id && (
-                                    <Box sx={{ marginTop: '10px', padding: '10px', color: '#fff' }}>
-                                        <Grid container spacing={2}>
-                                            <Grid item xs={4}>
-                                                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Mission Type:</Typography>
-                                                <Typography variant="body2">{mission.mission_type}</Typography>
-                                            </Grid>
-                                            <Grid item xs={4}>
-                                                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Mission Location:</Typography>
-                                                <Typography variant="body2">{mission.mission_location}</Typography>
-                                            </Grid>
-                                            <Grid item xs={4}>
-                                                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Mission Distance:</Typography>
-                                                <Typography variant="body2">{mission.mission_distance} km</Typography>
-                                            </Grid>
-                                            <Grid item xs={4}>
-                                                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Drone Station:</Typography>
-                                                <Typography variant="body2">{mission.assigned_drone}</Typography>
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Mission Description:</Typography>
-                                                <Typography variant="body2">{mission.mission_description}</Typography>
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Mission Start Time:</Typography>
-                                                <Typography variant="body2">{mission.mission_start_time}</Typography>
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Mission End Time:</Typography>
-                                                <Typography variant="body2">{mission.mission_end_time}</Typography>
-                                            </Grid>
-                                        </Grid>
+                                <Paper key={mission.mission_id} elevation={3} sx={{ padding: '10px', marginBottom: '10px', backgroundColor: '#6870fa', borderRadius: '8px' }}>
+                                    <Box sx={{ display: 'flex' }}>
+                                        <Button onClick={() => toggleMissionDetails(mission)} sx={{ width: '100%', textAlign: 'left', backgroundColor: 'transparent', border: 'none', padding: '0' }}>
+                                            <Typography variant="body1" sx={{ color: '#fff' }}>
+                                                Mission ID # {mission.mission_id} &nbsp;
+                                                <span
+                                                    style={{
+                                                        fontWeight: 'bold',
+                                                        backgroundColor: getMissionColor(mission.mission_status),
+                                                        color: '#fff',
+                                                        padding: '4px 8px',
+                                                        borderRadius: '10px',
+                                                        display: 'inline-block',
+                                                    }}
+                                                >
+                                                    {mission.mission_status}
+                                                </span>
+                                            </Typography>
+                                        </Button>
+                                        <Button onClick={() => handleEdit(mission)} sx={{ color: '#fff' }}><EditIcon /></Button>
+                                        <Button onClick={() => handleDelete(mission)} sx={{ color: '#fff' }}><DeleteIcon /></Button>
+                                        <Button onClick={() => toggleMissionDetails(mission)} sx={{ color: '#fff' }}>
+                                            {missionDetails?.mission_id === mission.mission_id ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                                        </Button>
                                     </Box>
-                                )}
+                                    {missionDetailsVisible === mission.mission_id && (
+                                        <Box sx={{ marginTop: '10px', padding: '10px', color: '#fff' }}>
+                                            <Grid container spacing={2}>
+                                                <Grid item xs={4}>
+                                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Mission Type:</Typography>
+                                                    <Typography variant="body2">{mission.mission_type}</Typography>
+                                                </Grid>
+                                                <Grid item xs={4}>
+                                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Mission Location:</Typography>
+                                                    <Typography variant="body2">{mission.mission_location}</Typography>
+                                                </Grid>
+                                                <Grid item xs={4}>
+                                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Mission Distance:</Typography>
+                                                    <Typography variant="body2">{mission.mission_distance} km</Typography>
+                                                </Grid>
+                                                <Grid item xs={4}>
+                                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Drone Station:</Typography>
+                                                    <Typography variant="body2">{mission.assigned_drone}</Typography>
+                                                </Grid>
+                                                <Grid item xs={6}>
+                                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Mission Description:</Typography>
+                                                    <Typography variant="body2">{mission.mission_description}</Typography>
+                                                </Grid>
+                                                <Grid item xs={6}>
+                                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Mission Start Time:</Typography>
+                                                    <Typography variant="body2">{mission.mission_start_time}</Typography>
+                                                </Grid>
+                                                <Grid item xs={6}>
+                                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Mission End Time:</Typography>
+                                                    <Typography variant="body2">{mission.mission_end_time}</Typography>
+                                                </Grid>
+                                            </Grid>
+                                        </Box>
+                                    )}
 
-                            </Paper>
-                        ))}
-                    </Box>
+                                </Paper>
+                            ))}
+                        </Box>
+                    ) : ""}
                     <Modal open={confirmationModalOpen} onClose={() => setConfirmationModalOpen(false)}>
                         <Box sx={{
                             position: 'absolute',
@@ -329,8 +317,8 @@ export default function Missions() {
                     {((selectedMission && action === 'edit') || action === 'add') && !confirmationModalOpen && (
                         <AddEditMission mission={selectedMission} onClose={() => { setSelectedMission(null); setAction('view') }} onModifyWaypoints={handleModifyWaypoints} />
                     )}
-                </Box>
 
+                </Box>
             )}
         </Box>
     )

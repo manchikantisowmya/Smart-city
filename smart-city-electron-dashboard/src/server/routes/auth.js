@@ -55,7 +55,6 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    // console.log('User found:',user);
     if (!user) {
       return res.status(400).json({ message: 'User not found.' });
     }
@@ -67,7 +66,6 @@ router.post('/login', async (req, res) => {
     }
     const role_id = user.role_id;
     const role = await Role.findOne({ role_id });
-    // console.log('role found:',role);
     user.role_id = role.role_id;
     user.role_name = role.role_name;
     // const isMatch = await bcrypt.compare(password, user.password);
@@ -84,7 +82,7 @@ router.post('/login', async (req, res) => {
 });
 
 // API to fetch dashboard data
-router.get('/dashboard', async (req, res) => {
+router.get('/dashboardDroneInfo', async (req, res) => {
   try {
     const noOfDrones = await Drone.countDocuments(); // Count drones
     const noOfMissions = await DroneMissions_Y.countDocuments(); // Count missions
@@ -97,38 +95,43 @@ router.get('/dashboard', async (req, res) => {
 
     const missionsPerDay = await DroneMissions_Y.aggregate([
       {
-        // Match documents where mission_start_time exists and is not an empty string
+        // Match documents where mission_start_time exists and is a valid date
         $match: {
-          mission_start_time: { $ne: '' }
+          mission_start_time: { $exists: true, $ne: null }
         }
       },
       {
-        // Add a field that converts the mission_start_time string to a date
-        $addFields: {
-          mission_start_date: {
-            $dateFromString: {
-              dateString: '$mission_start_time',
-              format: '%Y-%m-%d %H:%M:%S', // Define the format of your date string
-              onError: null, // If conversion fails, set the value to null
-              onNull: null // Handle cases where the field is null
-            }
-          }
-        }
-      },
-      {
-        // Match only documents where the date conversion was successful
-        $match: { mission_start_date: { $ne: null } }
-      },
-      {
-        // Group by the day of the week
+        // Group by the day of the week from the mission_start_time field
         $group: {
-          _id: { $dayOfWeek: '$mission_start_date' }, // Extract day of week from the converted date
+          _id: { $dayOfWeek: "$mission_start_time" },
           count: { $sum: 1 }
         }
+      },
+      {
+        // Map day numbers (1 = Sunday, ..., 7 = Saturday) to day names
+        $project: {
+          day: {
+            $switch: {
+              branches: [
+                { case: { $eq: ["$_id", 1] }, then: "Sunday" },
+                { case: { $eq: ["$_id", 2] }, then: "Monday" },
+                { case: { $eq: ["$_id", 3] }, then: "Tuesday" },
+                { case: { $eq: ["$_id", 4] }, then: "Wednesday" },
+                { case: { $eq: ["$_id", 5] }, then: "Thursday" },
+                { case: { $eq: ["$_id", 6] }, then: "Friday" },
+                { case: { $eq: ["$_id", 7] }, then: "Saturday" }
+              ],
+              default: null
+            }
+          },
+          count: 1
+        }
+      },
+      {
+        // Sort by day of the week
+        $sort: { _id: 1 }
       }
     ]);
-
-    // console.log(missionsPerDay);
     res.json({
       noOfDrones,
       noOfMissions,
@@ -434,4 +437,38 @@ router.post('/addUpdateMission', async (req, res) => {
   }
 
 })
+
+router.get('/dashboardCCTVInfo', async (req, res) => {
+  try {
+
+    const camera_data = await CaltransCamera.find();
+
+    const routeCounts = {};
+    const timeIntervals = ["00:00", "06:00", "12:00", "18:00", "24:00"]; // Example intervals
+    const serviceDensity = { estimated: [], groundTruth: [] };
+
+    camera_data.forEach((camera) => {
+      // Group cameras by route
+      if (!routeCounts[camera.route]) {
+        routeCounts[camera.route] = { active: 0, inactive: 0 };
+      }
+      if (camera.inService) {
+        routeCounts[camera.route].active += 1;
+      } else {
+        routeCounts[camera.route].inactive += 1;
+      }
+
+      // Add dummy density data for time intervals (example for graph)
+      serviceDensity.estimated.push(Math.random() * 100); // Simulated estimated data
+      serviceDensity.groundTruth.push(Math.random() * 100); // Simulated ground truth data
+    });
+    res.json({
+      routeCounts, timeIntervals, serviceDensity
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 module.exports = router;

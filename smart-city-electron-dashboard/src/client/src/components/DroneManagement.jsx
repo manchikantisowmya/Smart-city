@@ -116,9 +116,7 @@ export default function DroneManagement() {
   const handleDeleteDrone = async () => {
     if (droneToDelete) {
       try {
-        console.log(droneToDelete.drone_id);  // Check if this is correctly logging the drone_id
         await axios.delete(`${BASE_URL}/drones/${droneToDelete.drone_id}`);  // Pass the drone_id in the URL
-        console.log('Drone to delete:', droneToDelete);
 
         setDrones(drones.filter((drone) => drone.drone_id !== droneToDelete.drone_id));
         setIsConfirmModalOpen(false);  // Close modal
@@ -211,6 +209,7 @@ export default function DroneManagement() {
         </Alert>
       </Snackbar>
       {selectedAction === 'view' && (
+         <div style={{ maxHeight: '75vh', overflow: 'auto' }}>
         <Table sx={{ border: '2px solid white' }} stickyHeader>
           <TableHead>
             <TableRow>
@@ -236,8 +235,11 @@ export default function DroneManagement() {
             ))}
           </TableBody>
         </Table>
+        </div>
       )}
+     
     </Box>
+
   );
 
   const renderMissionsSection = () => (

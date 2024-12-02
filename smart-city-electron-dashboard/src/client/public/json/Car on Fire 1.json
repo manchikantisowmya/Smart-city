@@ -3,12 +3,11 @@
     "Accident Detected": "True",
     "Accident Type": "Accident Type: car_on_fire",
     "Emergency Car On Site": "True",
-    "People On Road Count": "People On Road Count: 36",
-    "Total Vehicle Count": "Total Vehicle Count: 475",
-    "Cars Count": "Cars Count: 287",
+    "People On Road Count": "People On Road Count: 30",
+    "Total Vehicle Count": "Total Vehicle Count: 257",
+    "Cars Count": "Cars Count: 158",
     "Trucks Count": 0,
-    "Cyclists Count": "Cyclists Count: 33",
-    "Large Vehicle Count": "Large Vehicle Count: 155",
-    "Vehicles Invloved":1
-
+    "Cyclists Count": "Cyclists Count: 26",
+    "Large Vehicle Count": "Large Vehicle Count: 73",
+    "Vehicles Invloved" : 1
 }

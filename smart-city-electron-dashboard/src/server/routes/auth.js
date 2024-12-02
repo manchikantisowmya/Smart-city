@@ -444,8 +444,8 @@ router.get('/dashboardCCTVInfo', async (req, res) => {
     const camera_data = await CaltransCamera.find();
 
     const routeCounts = {};
-    const timeIntervals = ["00:00", "06:00", "12:00", "18:00", "24:00"]; // Example intervals
-    const serviceDensity = { estimated: [], groundTruth: [] };
+    const cameraLocations = [];
+
 
     camera_data.forEach((camera) => {
       // Group cameras by route
@@ -457,13 +457,13 @@ router.get('/dashboardCCTVInfo', async (req, res) => {
       } else {
         routeCounts[camera.route].inactive += 1;
       }
-
-      // Add dummy density data for time intervals (example for graph)
-      serviceDensity.estimated.push(Math.random() * 100); // Simulated estimated data
-      serviceDensity.groundTruth.push(Math.random() * 100); // Simulated ground truth data
+      cameraLocations.push({
+        lat: parseFloat(camera.lat),
+        lng: parseFloat(camera.lng),
+      });
     });
     res.json({
-      routeCounts, timeIntervals, serviceDensity
+      routeCounts, cameraLocations
     });
   } catch (error) {
     console.error(error);

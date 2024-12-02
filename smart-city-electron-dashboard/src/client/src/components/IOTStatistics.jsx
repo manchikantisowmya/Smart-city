@@ -1,6 +1,6 @@
 import React from "react";
 import { Bar } from "react-chartjs-2";
-import { Card, CardContent, Typography, Grid , Box} from "@mui/material";
+import { Card, CardContent, Typography, Grid, Box } from "@mui/material";
 import GaugeChart from "react-gauge-chart";
 
 export const IOTCharts = ({ iotData, cardStyle }) => {
@@ -114,27 +114,27 @@ export const IOTCharts = ({ iotData, cardStyle }) => {
     };
 
     return (
-        <Grid container spacing={2}>
+        <Grid container spacing={2} sx={{ padding: '20px', paddingBottom:'0px' }}>
             <Grid item xs={12} md={6}>
                 <Card style={cardStyle}>
                     <CardContent>
                         <Typography variant="h6" sx={{ color: "#B0E57C", marginBottom: "10px" }}>
-                            Stations by City
+                            IOT Stations by City
                         </Typography>
                         <Bar data={barChartData} options={barChartOptions} style={{ maxHeight: "400px" }} />
                     </CardContent>
                 </Card>
             </Grid>
             <Grid item xs={12} md={6}>
-                <Card style={cardStyle} sx={{ flex: 1, height:'100%' }}>
-                    <CardContent sx={{ height:'100%' }}>
+                <Card style={cardStyle} sx={{ flex: 1, height: '100%' }}>
+                    <CardContent sx={{ height: '100%' }}>
                         <Box
                             sx={{
                                 display: "flex",
                                 justifyContent: "space-between",
                                 alignItems: "center",
-                                gap: "10px", 
-                                height:'100%'
+                                gap: "10px",
+                                height: '100%'
                             }}
                         >
                             {/* First Speedometer */}
@@ -146,10 +146,11 @@ export const IOTCharts = ({ iotData, cardStyle }) => {
                                     id="current-speedometer"
                                     nrOfLevels={30}
                                     percent={averageCurrentSpeed / 20}
-                                    colors={["#FF5F6D", "#FFC371", "#4CAF50"]}
+                                    colors={["#FF5F6D", "#FFC371", "#B0E57C"]}
                                     arcWidth={0.2}
-                                    textColor="#000"
-                                    style={{ maxHeight: "400px"}}
+                                    textColor="#B0E57C"
+                                    needleColor="#B0E57C" 
+                                    style={{ maxHeight: "400px" }}
                                     formatTextValue={() => `${averageCurrentSpeed.toFixed(1)} m/s`}
                                 />
                             </Box>
@@ -163,20 +164,16 @@ export const IOTCharts = ({ iotData, cardStyle }) => {
                                     id="free-flow-speedometer"
                                     nrOfLevels={30}
                                     percent={averageFreeFlowSpeed / 20}
-                                    colors={["#FF5F6D", "#FFC371", "#4CAF50"]}
+                                    colors={["#FF5F6D", "#FFC371", "#B0E57C"]}
                                     arcWidth={0.2}
-                                    textColor="#000"
+                                    textColor="#B0E57C"
+                                    needleColor="#B0E57C" 
                                     style={{ maxHeight: "400px" }}
                                     formatTextValue={() => `${averageFreeFlowSpeed.toFixed(1)} m/s`}
                                 />
                             </Box>
                         </Box>
                     </CardContent>
-                </Card>
-            </Grid>
-            <Grid item xs={12} md={6}>
-                <Card style={cardStyle}>
-
                 </Card>
             </Grid>
         </Grid>

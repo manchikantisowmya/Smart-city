@@ -2,6 +2,7 @@ import React from "react";
 import { Bar } from "react-chartjs-2";
 import { Card, CardContent, Typography, Grid, Box } from "@mui/material";
 import GaugeChart from "react-gauge-chart";
+import OriginalVsPredicted from "../Images/OriginalVsPredicted.jpeg";
 
 export const IOTCharts = ({ iotData, cardStyle }) => {
     // Aggregate data for unique locations
@@ -114,18 +115,18 @@ export const IOTCharts = ({ iotData, cardStyle }) => {
     };
 
     return (
-        <Grid container spacing={2} sx={{ padding: '20px', paddingBottom:'0px' }}>
-            <Grid item xs={12} md={6}>
+        <Grid container spacing={2} sx={{ padding: '20px', paddingBottom: '0px' }}>
+            <Grid item xs={12} md={4}>
                 <Card style={cardStyle}>
                     <CardContent>
                         <Typography variant="h6" sx={{ color: "#B0E57C", marginBottom: "10px" }}>
                             IOT Stations by City
                         </Typography>
-                        <Bar data={barChartData} options={barChartOptions} style={{ maxHeight: "400px" }} />
+                        <Bar data={barChartData} options={barChartOptions} style={{ maxHeight: "300px" }} />
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={4}>
                 <Card style={cardStyle} sx={{ flex: 1, height: '100%' }}>
                     <CardContent sx={{ height: '100%' }}>
                         <Box
@@ -149,8 +150,8 @@ export const IOTCharts = ({ iotData, cardStyle }) => {
                                     colors={["#FF5F6D", "#FFC371", "#B0E57C"]}
                                     arcWidth={0.2}
                                     textColor="#B0E57C"
-                                    needleColor="#B0E57C" 
-                                    style={{ maxHeight: "400px" }}
+                                    needleColor="#B0E57C"
+                                    style={{ maxHeight: "300px" }}
                                     formatTextValue={() => `${averageCurrentSpeed.toFixed(1)} m/s`}
                                 />
                             </Box>
@@ -167,11 +168,25 @@ export const IOTCharts = ({ iotData, cardStyle }) => {
                                     colors={["#FF5F6D", "#FFC371", "#B0E57C"]}
                                     arcWidth={0.2}
                                     textColor="#B0E57C"
-                                    needleColor="#B0E57C" 
-                                    style={{ maxHeight: "400px" }}
+                                    needleColor="#B0E57C"
+                                    style={{ maxHeight: "300px" }}
                                     formatTextValue={() => `${averageFreeFlowSpeed.toFixed(1)} m/s`}
                                 />
                             </Box>
+                        </Box>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item xs={12} md={4}>
+                <Card style={cardStyle}>
+                    <Typography variant="h6" sx={{ color: "#B0E57C", padding: "10px" }}>
+                        Actual vs Predicted
+                    </Typography>
+                    <CardContent>
+                        <Box sx={{ textAlign: "center" }}>
+                            <img src={OriginalVsPredicted} alt="Actual vs Predicted"
+                                style={{ maxWidth: "100%", borderRadius: "10px", height: "300px", backgroundColor: "rgba(255, 255, 255, 0.25)", mixBlendMode: "multiply" }}
+                            />
                         </Box>
                     </CardContent>
                 </Card>

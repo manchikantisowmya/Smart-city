@@ -170,7 +170,7 @@ export default function Dashboard() {
         backgroundColor: 'rgba(76, 175, 80, 0.2)',
         borderColor: '#4caf50',
         fill: true,
-        padding:'10',
+        padding: '10',
       },
     ],
   };
@@ -339,113 +339,101 @@ export default function Dashboard() {
           {legend()}
         </Grid>
         <Grid item xs={12} md={6}>
-          <Box sx={{ height: '550px', backgroundColor: '#1a1a3d', borderRadius: '10px', overflow: 'hidden' }}>
-            <Typography variant="h6" sx={{ color: '#fff', padding: '5px' }}>
-              Drone Monitoring
-            </Typography>
-            <MapContainer center={[37.7749, -122.4194]} zoom={15} style={{ height: '65vh', width: '100%' }} ref={mapRef} >
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              <MapSearchControl />
-              {filteredDroneStations.map((drone, index) => {
-                return (
-                  <Marker
-                    key={drone.station_id}
-                    position={[drone.Latitude, drone.Longitude]}
-                    icon={createDroneIcon(drone.Inservice)}
-                    ref={(el) => (markerRefs.current[drone.station_id] = el)}  // Assign marker ref to the drone station ID
-                  >
-                    <Popup>
-                      Station ID: <strong>{drone.station_id}</strong> <br />
-                      Address: <strong>{drone.Location}</strong> <br />
-                      Status: <strong>{drone.Inservice}</strong> <br />
-                      Drone Used: <strong>{drone.drone_info.name}</strong> <br />
-                    </Popup>
-                  </Marker>
-                );
-              })}
-            </MapContainer>
-          </Box>
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <Box sx={{ height: '550px', backgroundColor: '#1a1a3d', borderRadius: '10px', overflow: 'hidden' }}>
-            <Typography variant="h6" sx={{ color: '#fff', padding: '5px' }}>
-              CCTV Monitoring
-            </Typography>
-            <Box sx={{ position: 'absolute', top: 10, right: 10, backgroundColor: '#fff', padding: 1, borderRadius: 1, zIndex: 1000 }}>
-              <Typography variant="body2"><span style={{ color: '#00FF00' }}>■</span> Active</Typography>
-              <Typography variant="body2"><span style={{ color: '#FF0000' }}>■</span> Inactive</Typography>
-            </Box>
-            <MapContainer center={[37.7749, -122.4194]} zoom={12} style={{ height: '65vh', width: '100%' }} ref={mapRef}>
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              <MapSearchControl />
-              {filteredCameras.map((camera) => (
+          <Typography variant="h6" sx={{ color: '#fff', padding: '5px' }}>
+            Drone Monitoring
+          </Typography>
+          <MapContainer center={[37.7749, -122.4194]} zoom={15} style={{ height: '65vh', width: '100%' }} ref={mapRef} >
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <MapSearchControl />
+            {filteredDroneStations.map((drone, index) => {
+              return (
                 <Marker
-                  key={camera.camera_id}
-                  position={[camera.lat, camera.lng]}
-                  icon={getStatusIcon(camera.inService)}
-                  ref={(el) => markerRefs.current[camera.camera_id] = el}
-                  eventHandlers={{
-                    click: () => handleCCTVMarkerClick(camera),
-                  }}
+                  key={drone.station_id}
+                  position={[drone.Latitude, drone.Longitude]}
+                  icon={createDroneIcon(drone.Inservice)}
+                  ref={(el) => (markerRefs.current[drone.station_id] = el)}  // Assign marker ref to the drone station ID
                 >
                   <Popup>
-                    <Typography variant="body1">{camera.locationName}</Typography>
-                    <Typography variant="body2">Nearby: {camera.nearbyPlace}</Typography>
-                    {camera.direction && <Typography variant="body2">Direction: {camera.direction}</Typography>}
+                    Station ID: <strong>{drone.station_id}</strong> <br />
+                    Address: <strong>{drone.Location}</strong> <br />
+                    Status: <strong>{drone.Inservice}</strong> <br />
+                    Drone Used: <strong>{drone.drone_info.name}</strong> <br />
                   </Popup>
                 </Marker>
-              ))}
-            </MapContainer>
-          </Box>
+              );
+            })} 
+          </MapContainer>
         </Grid>
 
         <Grid item xs={12} md={6}>
-          <Box sx={{ height: '550px', backgroundColor: '#1a1a3d', borderRadius: '10px', overflow: 'hidden' }}>
-            <Typography variant="h6" sx={{ color: '#fff', padding: '5px' }}>
-              Missions
-            </Typography>
-            <Missions showCurrentMissions={false} />
+          <Typography variant="h6" sx={{ color: '#fff', padding: '5px' }}>
+            CCTV Monitoring
+          </Typography>
+          <Box sx={{ position: 'absolute', top: 10, right: 10, backgroundColor: '#fff', padding: 1, borderRadius: 1, zIndex: 1000 }}>
+            <Typography variant="body2"><span style={{ color: '#00FF00' }}>■</span> Active</Typography>
+            <Typography variant="body2"><span style={{ color: '#FF0000' }}>■</span> Inactive</Typography>
           </Box>
+          <MapContainer center={[37.7749, -122.4194]} zoom={12} style={{ height: '65vh', width: '100%' }} ref={mapRef}>
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <MapSearchControl />
+            {filteredCameras.map((camera) => (
+              <Marker
+                key={camera.camera_id}
+                position={[camera.lat, camera.lng]}
+                icon={getStatusIcon(camera.inService)}
+                ref={(el) => markerRefs.current[camera.camera_id] = el}
+                eventHandlers={{
+                  click: () => handleCCTVMarkerClick(camera),
+                }}
+              >
+                <Popup>
+                  <Typography variant="body1">{camera.locationName}</Typography>
+                  <Typography variant="body2">Nearby: {camera.nearbyPlace}</Typography>
+                  {camera.direction && <Typography variant="body2">Direction: {camera.direction}</Typography>}
+                </Popup>
+              </Marker>
+            ))}
+          </MapContainer>
         </Grid>
 
         <Grid item xs={12} md={6}>
-          <Box sx={{ height: '550px', backgroundColor: '#1a1a3d', borderRadius: '10px', overflow: 'hidden' }}>
-            <Typography variant="h6" sx={{ color: '#fff', padding: '5px' }}>
-              IOT
-            </Typography>
-            <MapContainer
-              center={[37.7749, -122.4194]} zoom={13} style={{ height: '65vh', width: '100%' }}
-            >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <MapSearchControl />
-              {iotData.map((device) => (
-                <Marker
-                  key={device._id}
-                  position={[device.Latitude, device.Longitude]}
-                  icon={createIoTIcon(device['Jam Factor'])}
-                  eventHandlers={{
-                    mouseover: (e) => e.target.openPopup(),
-                    mouseout: (e) => e.target.closePopup(),
-                  }}
-                >
-                  <Popup>
-                    <Typography variant="body1" gutterBottom>
-                      IOT Information:
-                    </Typography>
-                    <Typography variant="caption">
-                      Location: {device.Location} <br />
-                      Jam Factor: {device['Jam Factor']} <br />
-                      Free Flow Speed: {device['Free Flow Speed (m/s)']} mph <br />
-                      Current Speed: {device['Current Speed (m/s)']} mph
-                    </Typography>
-                  </Popup>
-                </Marker>
-              ))}
-            </MapContainer>
-          </Box>
+          <Typography variant="h6" sx={{ color: '#fff', padding: '5px' }}>
+            Missions
+          </Typography>
+          <Missions showCurrentMissions={false} />
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <Typography variant="h6" sx={{ color: '#fff', padding: '5px' }}>
+            IOT
+          </Typography>
+          <MapContainer center={[37.7749, -122.4194]} zoom={13} style={{ height: '80vh', width: '100%' }}>
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"  />
+            <MapSearchControl />
+            {iotData.map((device) => (
+              <Marker
+                key={device._id}
+                position={[device.Latitude, device.Longitude]}
+                icon={createIoTIcon(device['Jam Factor'])}
+                eventHandlers={{
+                  mouseover: (e) => e.target.openPopup(),
+                  mouseout: (e) => e.target.closePopup(),
+                }}
+              >
+                <Popup>
+                  <Typography variant="body1" gutterBottom>
+                    IOT Information:
+                  </Typography>
+                  <Typography variant="caption">
+                    Location: {device.Location} <br />
+                    Jam Factor: {device['Jam Factor']} <br />
+                    Free Flow Speed: {device['Free Flow Speed (m/s)']} mph <br />
+                    Current Speed: {device['Current Speed (m/s)']} mph
+                  </Typography>
+                </Popup>
+              </Marker>
+            ))}
+          </MapContainer>
         </Grid>
 
 
@@ -530,9 +518,9 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={4}>
           <Card style={cardStyle}>
-            <Typography variant="h6" sx={{ color: '#B0E57C', padding:"10px" }}>
+            <Typography variant="h6" sx={{ color: '#B0E57C', padding: "10px" }}>
               Drone Status
             </Typography>
             <CardContent>
@@ -560,24 +548,24 @@ export default function Dashboard() {
           </Card>
 
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={4}>
           <Card style={cardStyle}>
             <CardContent>
-              <Line data={lineData} options={line_options} style={{ height: "350px" }}  />
+              <Line data={lineData} options={line_options} style={{ height: "350px" }} />
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Card style={cardStyle}>
+            <Typography variant="h6" sx={{ color: "#B0E57C", padding: "10px" }}>
+              Camera Status by Route
+            </Typography>
+            <CardContent>
+              <Bar data={barChartData} options={barChartOptions} style={{ height: "300px" }} />
             </CardContent>
           </Card>
         </Grid>
         <IOTCharts iotData={iotData} cardStyle={cardStyle}></IOTCharts>
-        <Grid item xs={12} md={6}>
-          <Card style={cardStyle}>
-            <Typography variant="h6" sx={{ color: "#B0E57C", padding:"10px" }}>
-              Camera Status by Route
-            </Typography>
-            <CardContent>
-              <Bar data={barChartData} options={barChartOptions} style={{ height: "400px" }} />
-            </CardContent>
-          </Card>
-        </Grid>
       </Grid>
     )
   };

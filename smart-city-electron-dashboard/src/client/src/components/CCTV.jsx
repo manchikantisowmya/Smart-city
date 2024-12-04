@@ -33,7 +33,7 @@ export default function CCTV() {
   };
 
   return (
-    <Box sx={{ flexGrow: 1, height: '85vh' }}>
+    <Box sx={{ flexGrow: 1, height: '100vh' }}>
       {/* Top Navigation Bar */}
       <AppBar position="static" sx={{ backgroundColor: '#120639', padding: 0, boxShadow: 'none' }}>
         <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>

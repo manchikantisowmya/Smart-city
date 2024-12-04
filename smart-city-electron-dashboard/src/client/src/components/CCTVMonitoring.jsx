@@ -115,10 +115,11 @@ export default function CCTVMonitoring() {
         color = '#000000'; // Inactive (Black)
         break;
       case 'Incident':
-        color = '#FF0000'; // Incident (Red)
+        color = '#CCCCCC'; // Incident (Red)
         break;
       default:
-        color = '#CCCCCC'; // Default (Gray)
+        color = '#FF0000'; // Default (Red)
+     
     }
   
     return new L.divIcon({

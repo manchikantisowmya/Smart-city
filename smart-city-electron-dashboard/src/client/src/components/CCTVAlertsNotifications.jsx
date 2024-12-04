@@ -14,15 +14,17 @@ const createRedCameraIcon = (color = 'red') =>
         style={{
           fontSize: '24px',
           color: color,
-          textShadow: '1px 1px 2px black',
+          stroke: 'black', // Black outline
+          strokeWidth: 1, // Thickness of the outline
         }}
       />
     ),
-    className: '', // Remove default Leaflet class styles
+    className: '',
     iconSize: [24, 24],
-    iconAnchor: [12, 24],
-    popupAnchor: [0, -24],
+    iconAnchor: [12, 12],
+    popupAnchor: [0, -12],
   });
+
 
 const alertsData = [
   {

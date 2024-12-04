@@ -25,6 +25,9 @@ export default function IoTSection() {
   const [routes, setRoutes] = useState([]);
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [pieData, setPieData] = useState({ labels: [], datasets: [] });
+  const [cities, setCities] = useState([]);
+  const [states, setStates] = useState([]);
+  const [zipCodes, setZipCodes] = useState([]);
 
   useEffect(() => {
     const fetchIotData = async () => {
@@ -35,6 +38,31 @@ export default function IoTSection() {
         if (response.length > 0) {
           setSelectedDevice(response[0]);
         }
+
+        const distinctCities = response.reduce((acc, station) => {
+          if (!acc.includes(station.city.trim())) {
+            acc.push(station.city.trim());
+          }
+          return acc;
+        }, []);
+
+        const distinctStates = response.reduce((acc, station) => {
+          if (!acc.includes(station.State.trim())) {
+            acc.push(station.State.trim());
+          }
+          return acc;
+        }, []);
+        const distinctZipCodes = response.reduce((acc, station) => {
+          const zip = station.Zipcode?.toString();
+          if (zip && !acc.includes(zip)) {
+            acc.push(zip);
+          }
+          return acc;
+        }, []);
+
+        setCities(distinctCities);
+        setStates(distinctStates);
+        setZipCodes(distinctZipCodes);
 
         // Prepare Pie Chart Data
         const colorCounts = {
@@ -82,11 +110,22 @@ export default function IoTSection() {
     setSelectedDevice(device);
   };
 
+  const handleSearch = (searchFields) => {
+    const filtered = iotData.filter((station) => {
+      return (
+        (!searchFields.state || station.State === searchFields.state) &&
+        (!searchFields.city || station.city.trim() === searchFields.city) &&
+        (!searchFields.zip || station.Zipcode?.toString() === searchFields.zip)
+      );
+    });
+    setIotData(filtered);
+  };
+
   return (
     <>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
-          <Search />
+          <Search onSearch={handleSearch} cities={cities} states={states} zipCodes={zipCodes} />
         </Grid>
         <Grid item xs={3}>
           <Box

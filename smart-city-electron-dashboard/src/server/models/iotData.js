@@ -6,7 +6,7 @@ const IoTDataSchema = new Schema({
   "Latitude": {
     type: Number
   },
-"Longitude": {
+  "Longitude": {
     type: Number
   },
   "Location": {
@@ -20,6 +20,15 @@ const IoTDataSchema = new Schema({
   },
   "Jam Factor": {
     type: Number
+  },
+  "city": {
+    type: String,
+  },
+  State: {
+    type: String,
+  },
+  Zipcode: {
+    type: Number,
   },
 }, { collection: 'IoTData' });
 

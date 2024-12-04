@@ -8,6 +8,8 @@ from dronekit import connect, VehicleMode, LocationGlobalRelative
 from bson import json_util
 import random
 import argparse
+import sys
+print(sys.path)
 
 # Set up option parsing to get connection string
 parser = argparse.ArgumentParser(description='Commands vehicle using vehicle.simple_goto.')
@@ -22,7 +24,7 @@ mission_id = args.mission_id
 
 # Go to command prompt on your windows machine and type 'ipconfig'
 # Copy the WSL IPv4 address and paste it below
-IP_ADDRESS = "192.168.0.133"
+IP_ADDRESS = "127.0.0.1"
 
 # Fetch mission details from the database based on the provided mission ID
 # Example: You need to implement this part based on your database setup

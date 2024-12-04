@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Box, Typography, Button, FormControl, InputLabel, Select, MenuItem, Grid, Card, CardContent, Dialog, DialogTitle, DialogContent, IconButton } from '@mui/material';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -116,10 +115,11 @@ export default function CCTVMonitoring() {
         color = '#000000'; // Inactive (Black)
         break;
       case 'Incident':
-        color = '#FF0000'; // Incident (Red)
+        color = '#CCCCCC'; // Incident (Red)
         break;
       default:
-        color = '#CCCCCC'; // Default (Gray)
+        color = '#FF0000'; // Default (Red)
+     
     }
   
     return new L.divIcon({

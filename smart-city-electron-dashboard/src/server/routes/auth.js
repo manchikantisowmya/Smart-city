@@ -236,6 +236,8 @@ router.get('/droneMissions/:drone_id', async (req, res) => {
   }
 });
 
+
+
 router.get('/droneStatistics', async (req, res) => {
   try {
     const noOfDrones = await Drone.countDocuments(); // Count drones

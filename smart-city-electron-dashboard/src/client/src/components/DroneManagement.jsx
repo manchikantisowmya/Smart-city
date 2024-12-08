@@ -345,8 +345,8 @@ export default function DroneManagement() {
               <strong>Price($):</strong> {selectedDrone.price}<br />
               <strong>Description:</strong> {selectedDrone.description}<br />
               <strong>Lidar:</strong> {selectedDrone.lidar ? 'Yes' : 'No'}<br />
-              <strong>Battery Life:</strong> {selectedDrone.dimensions?.battery_life} hrs<br />
-              <strong>Range:</strong> {selectedDrone.dimensions?.range} miles<br />
+              <strong>Battery Life:</strong> {selectedDrone.battery_life} hrs<br />
+              <strong>Range:</strong> {selectedDrone.range} miles<br />
             </Typography>
             <Button
               variant="contained"

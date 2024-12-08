@@ -203,6 +203,7 @@ const DroneMonitoring = () => {
     };
     const handleCheckMissionsClick = (drone) => {
         setSelectedDroneDetails(drone); // Set the drone details when "Check Missions" is clicked
+        console.log(drone)
         setShowMissionPlanner(true);    // Open the mission planner
     };
     const handleSearch = (searchFields) => {

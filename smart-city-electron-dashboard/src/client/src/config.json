@@ -1,7 +1,8 @@
 {
     "development": {
       "BASE_URL": "http://localhost:5002/api/auth",
-      "GEOCODE_API_KEY":"c6121c7bb642453aad8c3fce41a507ff"
+      "GEOCODE_API_KEY":"afde913a2cca444eb5678d0c4e38cb8b"
+      
     },
     "production": {
       "BASE_URL": "https://your-production-domain.com/api/auth"

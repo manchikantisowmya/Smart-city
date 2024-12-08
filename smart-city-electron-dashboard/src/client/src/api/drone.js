@@ -35,6 +35,8 @@ export const getDroneMissions = async (drone_id) => {
   }
 };
 
+
+
 export const getDroneStatistics = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/droneStatistics`);
@@ -81,5 +83,37 @@ export const getAllDroneMissions = async () => {
     return response.data;
   } catch (error) {
     throw new Error(error.response.data.message);
+  }
+};
+
+// export const getLastMissionID = async () => {
+//   try {
+//     const response = await axios.get(`${BASE_URL}/allDroneMissions`);
+//     return response.data;
+//   } catch (error) {
+//     throw new Error(error.response.data.message);
+//   }
+// };
+export const getLastMissionID = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/allDroneMissions`);
+    
+    // Assuming response.data is an array of mission objects
+    const missions = response.data;
+    
+    // Sort the missions by their mission_id (assuming it follows the 'M' + number pattern)
+    const sortedMissions = missions.sort((a, b) => {
+      const missionA = parseInt(a.mission_id.substring(1), 10);
+      const missionB = parseInt(b.mission_id.substring(1), 10);
+      return missionA - missionB;
+    });
+    
+    // Get the last mission ID
+    const lastMission = sortedMissions[sortedMissions.length - 1];
+    // console.log(lastMission)
+    return lastMission ? lastMission.mission_id : null;
+
+  } catch (error) {
+    throw new Error(error.response ? error.response.data.message : error.message);
   }
 };

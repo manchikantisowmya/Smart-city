@@ -72,9 +72,9 @@ export default function IoTSection() {
         };
         response.forEach((device) => {
           const color = get_marker_color(device['Jam Factor']);
-          if (color === '#ff0000') colorCounts.red += 1;
-          if (color === '#ffff00') colorCounts.yellow += 1;
-          if (color === '#00ff00') colorCounts.green += 1;
+          if (color === '#f44336') colorCounts.red += 1;
+          if (color === '#ff9800') colorCounts.yellow += 1;
+          if (color === '#4caf50') colorCounts.green += 1;
         });
         setPieData({
           labels: ['High Jam', 'Medium Jam', 'Low Jam'],
@@ -82,7 +82,7 @@ export default function IoTSection() {
             {
               label: 'Device Distribution',
               data: [colorCounts.red, colorCounts.yellow, colorCounts.green],
-              backgroundColor: ['#ff0000', '#ffff00', '#4caf50'],
+              backgroundColor: ['#f44336', '#ff9800', '#4caf50'],
             },
           ],
         });
@@ -170,7 +170,7 @@ export default function IoTSection() {
           <Box
             sx={{
               color: 'white',
-              height: '65vh',
+              height: '75vh',
               overflowY: 'auto',
               marginBottom: '5px',
               padding: '16px',
@@ -190,6 +190,11 @@ export default function IoTSection() {
                   <ListItemText
                     primary={`IOT ${device.Location}`}
                     secondary={`ID: ${device._id}`}
+                    sx={{
+                      '& .MuiTypography-root': {
+                        color: 'white', 
+                      },
+                    }}
                   />
                 </ListItem>
               ))}
@@ -200,7 +205,7 @@ export default function IoTSection() {
           <MapContainer
             center={[37.7749, -122.4194]}
             zoom={40}
-            style={{ height: '65vh', width: '100%' }}
+            style={{ height: '75vh', width: '100%' }}
           >
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

@@ -1,24 +1,15 @@
-// Modified by Yukta
-/*
-I changed the check mission button beside the detail button
-In the Pie chart drone station are shown instead of drones and also aligned the colors on the map with station instead of drone
-When click on Details it shows detail on Map itself
-
-Also how somehome I feel data in DroneMission is missing and incorrect the way points I beleive it would be good if we could use Drone_mission_y table"
-*/
-
 import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { getDroneStatistics, getDroneStations, getHighwaysWithExits } from '../api/drone.js';
-import MissionPlanner from './MissionPlanner'; 
+import MissionPlanner from './MissionPlanner';
 import { Pie } from 'react-chartjs-2';
 import MapSearchControl from '../Utilities/MapSearchControl';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Chart } from 'chart.js';
 import Search from './Search';
 import { Grid, Box, Typography, Button, Card, CardContent } from '@mui/material'; // Import Dialog components
-import {createDroneIcon} from '../Utilities/MapUtilities.js';
+import { createDroneIcon } from '../Utilities/MapUtilities.js';
 Chart.register(ChartDataLabels);
 
 const DroneMonitoring = () => {
@@ -31,7 +22,6 @@ const DroneMonitoring = () => {
     const [showMissionPlanner, setShowMissionPlanner] = useState(false);
     const [droneStatusData, setDroneStatusData] = useState(null);
     const [highwaysWithExits, setHighwaysWithExits] = useState(null);
-    //const mapRef = useRef(null);
     const [filteredDroneStations, setFilteredDroneStations] = useState([]);
     const [selectedDroneStation, setSelectedDroneStation] = useState(null);
     const mapRef = useRef();
@@ -163,17 +153,48 @@ const DroneMonitoring = () => {
         fetchHighwaysWithExits();
     }, []);
 
-    const pieData = droneStatusData
-        ? {
-            labels: droneStatusData.droneStatus.map((status) => status._id),
-            datasets: [
-                {
-                    label: '# of Drones',
-                    data: droneStatusData.droneStatus.map((status) => status.count),
-                    backgroundColor: ['#4caf50', '#f44336', '#ff9800'],
-                },
-            ],
+    const getStatusColor = (status) => {
+        let statusColor;
+        switch (status) {
+            case 'Active':
+                statusColor = '#4caf50'; // Green for Active
+                break;
+            case 'Stopped':
+                statusColor = '#f44336'; // Red for Stopped
+                break;
+            case 'Repair':
+                statusColor = '#ff9800'; // Orange for Repair
+                break;
+            default:
+                statusColor = '#9e9e9e'; // Grey for Unknown/Other status
+                break;
         }
+        return statusColor;
+    }
+
+    const pieData = droneStatusData
+        ? (() => {
+            const labels = [];
+            const data = [];
+            const backgroundColor = [];
+
+            droneStatusData.droneStatus.forEach((status) => {
+                labels.push(status._id);
+                data.push(status.count);
+                backgroundColor.push(getStatusColor(status._id));
+            });
+
+            return {
+                labels,
+                datasets: [
+                    {
+                        label: '# of Drones',
+                        data,
+                        backgroundColor,
+                    },
+                ],
+            };
+        })()
         : {
             labels: ['Loading...'],
             datasets: [
@@ -185,7 +206,9 @@ const DroneMonitoring = () => {
             ],
         };
 
+
     const handleDroneClick = (drone) => {
+        debugger;
         setSelectedDroneDetails(drone);
         // setShowDetailsPopup(true); // Open popup on button click
         setSelectedDroneStation(drone); // Set selected drone station
@@ -196,14 +219,13 @@ const DroneMonitoring = () => {
             mapRef.current.setView([drone.Latitude, drone.Longitude], 15);
         }
         // Open popup for the selected drone station
-        const markers = document.getElementsByClassName('leaflet-marker-icon');
-        Array.from(markers).forEach((marker) => {
-            marker.click();
-        });
+        const marker = markerRefs.current[drone.station_id];
+        if (marker) {
+            marker.openPopup(); // Open the popup for the selected marker
+        }
     };
     const handleCheckMissionsClick = (drone) => {
         setSelectedDroneDetails(drone); // Set the drone details when "Check Missions" is clicked
-        console.log(drone)
         setShowMissionPlanner(true);    // Open the mission planner
     };
     const handleSearch = (searchFields) => {

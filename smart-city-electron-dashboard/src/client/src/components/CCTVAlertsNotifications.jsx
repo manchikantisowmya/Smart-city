@@ -5,6 +5,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import CloseIcon from '@mui/icons-material/Close';
+import MapSearchControl from '../Utilities/MapSearchControl';
 
 // Function to create a custom red camera icon
 const createRedCameraIcon = (color = 'red') =>
@@ -93,15 +94,15 @@ const alertsData = [
 ];
 
 const videoSources = {
-    'San Mateo': '/videos/SanMateo.mp4',
-    'Solano': '/videos/Solano.mp4',
-    'Contra Costa': '/videos/ContraCosta.mp4',
-    'Hayward': '/videos/Hayward.mp4',
-    'Dublin': '/videos/Dublin.mp4',
-    'Gilroy': '/videos/Gilroy.mp4',
-    'Marin': '/videos/Marin.mp4',
-  };
- 
+  'San Mateo': '/videos/SanMateo.mp4',
+  'Solano': '/videos/Solano.mp4',
+  'Contra Costa': '/videos/ContraCosta.mp4',
+  'Hayward': '/videos/Hayward.mp4',
+  'Dublin': '/videos/Dublin.mp4',
+  'Gilroy': '/videos/Gilroy.mp4',
+  'Marin': '/videos/Marin.mp4',
+};
+
 export default function CCTVAlertsNotification() {
   const [mapCenter, setMapCenter] = useState([37.8000, -122.2000]); // Initial map center
   const [zoom, setZoom] = useState(13); // Initial zoom level
@@ -141,7 +142,7 @@ export default function CCTVAlertsNotification() {
   };
 
   return (
-    <Box sx={{ padding: 2, backgroundColor: '#120639', minHeight: '100vh', color: 'white' }}>
+    <Box sx={{ padding: 2, backgroundColor: '#120639', color: 'white' }}>
       {/* Table Section */}
       <TableContainer component={Paper} sx={{ backgroundColor: '#1B1B3A', color: 'white' }}>
         <Table>
@@ -177,7 +178,7 @@ export default function CCTVAlertsNotification() {
       </TableContainer>
 
       {/* Map Section */}
-      <Box sx={{ marginTop: 2, height: '400px' }}>
+      <Box sx={{ marginTop: 2, height: '45vh' }}>
         <MapContainer
           center={mapCenter}
           zoom={zoom}
@@ -185,6 +186,7 @@ export default function CCTVAlertsNotification() {
           whenCreated={(mapInstance) => (mapRef.current = mapInstance)} // Assign the map instance to the reference
         >
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <MapSearchControl />
           {alertsData.map((alert) => (
             <Marker
               key={alert.id}

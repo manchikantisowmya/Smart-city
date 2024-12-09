@@ -222,7 +222,7 @@ export default function DroneManagement() {
           </TableHead>
           <TableBody>
             {drones.map((drone) => (
-              <TableRow key={drone.id}>
+              <TableRow key={drone.drone_id}>
                 <TableCell sx={{ color: 'white', border: '1px solid white' }}>{drone.name}</TableCell>
                 <TableCell sx={{ color: 'white', border: '1px solid white' }}>{drone.type}</TableCell>
                 <TableCell sx={{ color: 'white', border: '1px solid white' }}>{drone.manufacturer}</TableCell>

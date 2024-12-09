@@ -187,7 +187,6 @@ router.get('/drones', async (req, res) => {
 // Add Drones
 router.post('/drones', async (req, res) => {
   const newDrone = req.body;  // Get the new drone data from the request body
-  console.log("newDrone")
   try {
     const savedDrone = await Drone.create(newDrone);  // Save it to the database
     res.status(201).json(savedDrone);  // Send the saved drone as the response
@@ -200,7 +199,6 @@ router.post('/drones', async (req, res) => {
 router.delete('/drones/:drone_id', async (req, res) => {  // Add :drone_id to the route path
   const droneId = req.params.drone_id;  // Get the drone_id from the route parameter
   console.log("drones from auth.js")
-  console.log(droneId);
   try {
     const deletedDrone = await Drone.findOneAndDelete({ drone_id: droneId });  // Delete drone by drone_id
     if (!deletedDrone) {
@@ -391,7 +389,6 @@ router.post('/addUpdateMission', async (req, res) => {
 
     // Check if mission with the given mission_id already exists
     let existingMission = await DroneMissions_Y.findOne({ mission_id });
-    console.log(existingMission);
     // If mission exists, update it; otherwise, create a new mission
     if (existingMission) {
       // Update the existing mission

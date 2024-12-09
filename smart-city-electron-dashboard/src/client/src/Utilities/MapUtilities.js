@@ -49,11 +49,11 @@ export const createDroneIcon = (status) => {
 
 export const get_marker_color = (jam) => {
     if (jam > 3.0) {
-        return '#ff0000'; // Red (high jam)
+        return '#f44336'; // Red (high jam)
     } else if (jam > 1.5 && jam <= 3.0) {
-        return '#ffff00'; // Yellow (medium jam)
+        return '#ff9800'; // Yellow (medium jam)
     } else {
-        return '#00ff00'; // Green (low jam)
+        return '#4caf50'; // Green (low jam)
     }
 };
 

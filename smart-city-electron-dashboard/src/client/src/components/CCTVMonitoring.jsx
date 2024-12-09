@@ -35,7 +35,7 @@ export default function CCTVMonitoring() {
     borderColor: 'white',
     backgroundColor: '#120639', // Match background color
   };
-  
+
   const fieldStyle = {
     '& .MuiInputBase-root': {
       color: 'white',
@@ -64,7 +64,7 @@ export default function CCTVMonitoring() {
       color: 'white',
     },
   };
-  
+
 
   useEffect(() => {
     const fetchCamerasData = async () => {
@@ -119,9 +119,9 @@ export default function CCTVMonitoring() {
         break;
       default:
         color = '#FF0000'; // Default (Red)
-     
+
     }
-  
+
     return new L.divIcon({
       html: ReactDOMServer.renderToString(
         <VideocamIcon
@@ -139,7 +139,7 @@ export default function CCTVMonitoring() {
       popupAnchor: [0, -12],
     });
   };
-  
+
 
   const handleViewOnMap = (camera) => {
     setSelectedCamera(camera);
@@ -173,7 +173,7 @@ export default function CCTVMonitoring() {
     }
     setOpenVideoModal(true);
   };
-  
+
 
   const handleCloseVideoModal = () => {
     setOpenVideoModal(false);
@@ -181,7 +181,7 @@ export default function CCTVMonitoring() {
   };
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh', flexDirection: 'row', padding: 2 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'row', padding: 2 }}>
       <Box sx={{ width: '30%', paddingRight: 2 }}>
         <Typography variant="h6" sx={{ color: '#fff', marginBottom: 2 }}>Search by Location</Typography>
 
@@ -221,7 +221,6 @@ export default function CCTVMonitoring() {
               color="primary"
               fullWidth
               sx={{
-                marginTop: 1,
                 color: '#fff',
                 ':hover': {
                   backgroundColor: 'primary.dark',
@@ -280,7 +279,7 @@ export default function CCTVMonitoring() {
           </Grid>
         </Grid>
 
-        <Box sx={{ backgroundColor: '#120639', color: 'white', height: '65vh', overflowY: 'auto', marginTop: 2 }}>
+        <Box sx={{ backgroundColor: '#120639', color: 'white', height: '68vh', overflowY: 'auto', marginTop: 2 }}>
           {filteredCameras.map((camera, index) => (
             <Card key={index} sx={{ backgroundColor: '#1a1a3d', marginBottom: '5px', color: 'white' }}>
               <CardContent>
@@ -303,101 +302,100 @@ export default function CCTVMonitoring() {
         </Box>
       </Box>
 
-      <Box sx={{ width: '70%', height: '65vh', position: 'relative', marginTop: '100px' }}>
-  {/* Wrapper for Legend and Map */}
-  <>
-    {/* Legend */}
-    <Box
-  sx={{
-    position: 'absolute',
-    top: -50, // Distance from the top
-    right: 10, // Distance from the right (outside map container)
-    zIndex: 1000, // Ensure it stays above other elements
-    backgroundColor: 'rgba(255, 255, 255, 0.95)', // Semi-transparent white
-    borderRadius: 12,
-    padding: '12px 16px',
-    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)', // Softer shadow
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 2,
-  }}
->
-  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-    <Box
-      sx={{
-        width: 16,
-        height: 16,
-        backgroundColor: '#00FF00', // Green for Active
-        borderRadius: '50%',
-      }}
-    />
-    <Typography variant="body2" sx={{ color: '#000', fontWeight: 500 }}>
-      Active
-    </Typography>
-  </Box>
+      <Box sx={{ width: '70%', position: 'relative', marginTop: '100px' }}>
+        <>
+          {/* Legend */}
+          <Box
+            sx={{
+              position: 'absolute',
+              top: -50, // Distance from the top
+              right: 10, // Distance from the right (outside map container)
+              zIndex: 1000, // Ensure it stays above other elements
+              backgroundColor: 'rgba(255, 255, 255, 0.95)', // Semi-transparent white
+              borderRadius: 12,
+              padding: '12px 16px',
+              boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)', // Softer shadow
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 2,
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box
+                sx={{
+                  width: 16,
+                  height: 16,
+                  backgroundColor: '#00FF00', // Green for Active
+                  borderRadius: '50%',
+                }}
+              />
+              <Typography variant="body2" sx={{ color: '#000', fontWeight: 500 }}>
+                Active
+              </Typography>
+            </Box>
 
-  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-    <Box
-      sx={{
-        width: 16,
-        height: 16,
-        backgroundColor: '#FF0000', // Red for Incident
-        borderRadius: '50%',
-      }}
-    />
-    <Typography variant="body2" sx={{ color: '#000', fontWeight: 500 }}>
-      Incident
-    </Typography>
-  </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box
+                sx={{
+                  width: 16,
+                  height: 16,
+                  backgroundColor: '#FF0000', // Red for Incident
+                  borderRadius: '50%',
+                }}
+              />
+              <Typography variant="body2" sx={{ color: '#000', fontWeight: 500 }}>
+                Incident
+              </Typography>
+            </Box>
 
-  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-    <Box
-      sx={{
-        width: 16,
-        height: 16,
-        backgroundColor: '#000000', // Black for Inactive
-        borderRadius: '50%',
-      }}
-    />
-    <Typography variant="body2" sx={{ color: '#000', fontWeight: 500 }}>
-      Inactive
-    </Typography>
-  </Box>
-</Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box
+                sx={{
+                  width: 16,
+                  height: 16,
+                  backgroundColor: '#000000', // Black for Inactive
+                  borderRadius: '50%',
+                }}
+              />
+              <Typography variant="body2" sx={{ color: '#000', fontWeight: 500 }}>
+                Inactive
+              </Typography>
+            </Box>
+          </Box>
 
 
-    {/* Map */}
-    <MapContainer
-      center={mapCenter}
-      zoom={zoom}
-      style={{ height: '100%', width: '100%' }}
-      ref={mapRef}
-    >
-      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-      {filteredCameras.map((camera) => (
-        <Marker
-          key={camera.camera_id}
-          position={[camera.lat, camera.lng]}
-          icon={getStatusIcon(camera.inService)}
-          ref={(el) => (markerRefs.current[camera.camera_id] = el)}
-          eventHandlers={{
-            click: () => handleMarkerClick(camera),
-          }}
-        >
-          <Popup>
-            <Typography variant="body1">Cam ID: {camera.camera_id}</Typography>
-            <Typography variant="body2">{camera.locationName}</Typography>
-            <Typography variant="body2">Nearby: {camera.nearbyPlace}</Typography>
-            <Typography variant="body2">
-              Status: {camera.inService === true ? 'Active' : camera.inService === 'Incident' ? 'Incident' : 'Inactive'}
-            </Typography>
-          </Popup>
-        </Marker>
-      ))}
-    </MapContainer>
-  </>
-</Box>
+          {/* Map */}
+          <MapContainer
+            center={mapCenter}
+            zoom={zoom}
+            style={{ height: '100%', width: '100%' }}
+            ref={mapRef}
+          >
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            {filteredCameras.map((camera) => (
+              <Marker
+                key={camera.camera_id}
+                position={[camera.lat, camera.lng]}
+                icon={getStatusIcon(camera.inService)}
+                ref={(el) => (markerRefs.current[camera.camera_id] = el)}
+                eventHandlers={{
+                  click: () => handleMarkerClick(camera),
+                }}
+              >
+                <Popup>
+                  <Typography variant="body1">Cam ID: {camera.camera_id}</Typography>
+                  <Typography variant="body2">{camera.locationName}</Typography>
+                  <Typography variant="body2">Nearby: {camera.nearbyPlace}</Typography>
+                  <Typography variant="body2">
+                    Status: {camera.inService === true ? 'Active' : camera.inService === 'Incident' ? 'Incident' : 'Inactive'}
+                  </Typography>
+                </Popup>
+              </Marker>
+            ))}
+          </MapContainer>
+        </>
+      </Box>
 
       <Dialog open={openVideoModal} onClose={handleCloseVideoModal} maxWidth="md" fullWidth>
         <DialogTitle>

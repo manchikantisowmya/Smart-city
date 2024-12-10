@@ -373,12 +373,12 @@ export default function Dashboard() {
               <div style={{ backgroundColor: '#4caf50', width: '15px', height: '15px', marginRight: '5px' }}></div>
               <Typography variant="h5">Active</Typography>
             </Box>  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ backgroundColor: '#ff9800', width: '15px', height: '15px', marginRight: '5px' }}></div>
-              <Typography variant="h5">Repair</Typography>
+              <div style={{ backgroundColor: '#9e9e9e', width: '15px', height: '15px', marginRight: '5px' }}></div>
+              <Typography variant="h5">Inactive</Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <div style={{ backgroundColor: '#f44336', width: '15px', height: '15px', marginRight: '5px' }}></div>
-              <Typography variant="h5">Stopped</Typography>
+              <Typography variant="h5">Incident</Typography>
             </Box>
           </Box>
           <MapContainer center={[37.7749, -122.4194]} zoom={12} style={{ height: '65vh', width: '100%' }} ref={mapRef}>

@@ -112,7 +112,7 @@ export default function CCTVMonitoring() {
         color = '#00FF00'; // Active (Green)
         break;
       case false:
-        color = '#000000'; // Inactive (Black)
+        color = '#9e9e9e'; // Inactive (Black)
         break;
       case 'Incident':
         color = '#CCCCCC'; // Incident (Red)
@@ -354,7 +354,7 @@ export default function CCTVMonitoring() {
                 sx={{
                   width: 16,
                   height: 16,
-                  backgroundColor: '#000000', // Black for Inactive
+                  backgroundColor: '#9e9e9e', // Black for Inactive
                   borderRadius: '50%',
                 }}
               />

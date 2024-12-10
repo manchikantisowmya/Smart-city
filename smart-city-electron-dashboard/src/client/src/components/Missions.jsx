@@ -202,7 +202,7 @@ export default function Missions({ showCurrentMissions = true }) {
                                 <Typography variant="h5">Failed</Typography>
                             </Box>
                         </Box>
-                        <MapContainer center={[37.7749, -122.4194]} zoom={13} style={{ height: '80vh' }}>
+                        <MapContainer center={[37.7749, -122.4194]} zoom={10} style={{ height: '80vh' }}>
                             <TileLayer
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
